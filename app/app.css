@@ -6,6 +6,10 @@
   font-family: 'Font Awesome 5 Free', 'fa-solid-900';
   font-weight: 900;
 }
+.ico {
+  font-family: FontAwesome;
+  font-size: 48;
+}
 
 ActionBar {
   background-color: #65adf1;
