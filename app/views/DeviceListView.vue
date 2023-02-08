@@ -16,20 +16,15 @@
         for="device in devices"
         separatorColor="transparent"
         class="list-group h-full"
+        @itemTap="loadDevice"
       >
         <v-template>
           <StackLayout>
             <GridLayout class="list--item" rows="auto" columns="auto, *">
-              <Image
-                row="0"
-                col="0"
-                class="fas list-icon--black"
-                src.decode="font://&#xf1ad;"
-              ></Image>
               <Label
                 row="0"
                 col="1"
-                colSpan="2"
+                colSpan="3"
                 :text="device.name"
                 class="h2 m-l-4 text--black"
               />
@@ -46,14 +41,18 @@
 
 <script lang="ts">
 import Vue from 'nativescript-vue';
+import DeviceView from './DeviceView.vue';
 
 export default Vue.extend({
 
   data() {
     return {
       devices: [ 
-        { name: "One" },
-        { name: "Two" },
+        { id: 1, name: "Living room thermostat" },
+        { id: 2, name: "Water leak sensor" },
+        { id: 3, name: "Fridge" },
+        { id: 4, name: "Outdoor weather" },
+        { id: 5, name: "Main door camera" },
       ],
     };
   },  
@@ -62,20 +61,17 @@ export default Vue.extend({
       console.log('You have tapped the message!');
       alert('You have tapped the message!');
     },
-  },
+    loadDevice(event) {
+      this.$navigateTo(DeviceView, {
+        props: {
+          id: event.item.id,
+          name: event.item.name
+        }
+      });     
+},
+},
 });
 </script>
 
 <style>
-.list-button {
-  background-color: #fff;
-  margin: 15px;
-  height: 80px;
-  border-color: #000000;
-  border-width: 2;
-}
-
-.logo {
-  margin: 40px;
-}
 </style>

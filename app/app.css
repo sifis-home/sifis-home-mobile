@@ -2,6 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+Page {
+  background-color: #fafafc;
+}
+
+.content {
+  margin: 15px;
+}
+
+.text-label {
+  margin: 15px;
+  margin-bottom: 0;
+}
+
 .fas {
   font-family: 'Font Awesome 5 Free', 'fa-solid-900';
   font-weight: 900;
@@ -27,4 +40,30 @@ ActionBar {
   border-color: rgba($color: #000000, $alpha: 0.1);
   border-width: 1;
   box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);
+}
+
+.list-button {
+  background-color: #fff;
+  margin: 15px;
+  height: 80px;
+  border-color: #000000;
+  border-width: 1;
+}
+
+.bordered {
+  border-color: #000000;
+  border-width: 1;
+}
+
+.logo {
+  margin: 40px;
+}
+
+.list-group {
+  margin: 0;
+  padding: 0;
+}
+.list-group-item {
+  margin: 0;
+  padding: 0;
 }

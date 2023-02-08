@@ -42,18 +42,19 @@ export default Vue.extend({
     login() {
       login('Please enter your credentials', 'Username', 'Password').then(
         (result) => {
-          this.apiLogin(result.userName, result.password);
-          this.apiLogin(result.userName, result.password).then((response) => {
-            if (response !== undefined) {
-              this.$navigateTo(TargetListView);
-            } else {
-              alert({
-                title: 'Login failed',
-                okButtonText: 'Ok',
-                message: 'Please check your password and email',
-              });
-            }
-          });
+          if (result.result) {
+            this.apiLogin(result.userName, result.password).then((response) => {
+              if (response !== undefined) {
+                this.$navigateTo(TargetListView);
+              } else {
+                alert({
+                  title: 'Login failed',
+                  okButtonText: 'Ok',
+                  message: 'Please check your password and email',
+                });
+              }
+            });
+          }
         }
       );
     },
@@ -67,16 +68,4 @@ export default Vue.extend({
 });
 </script>
 
-<style>
-.list-button {
-  background-color: #fff;
-  margin: 15px;
-  height: 80px;
-  border-color: #000000;
-  border-width: 2;
-}
-
-.logo {
-  margin: 40px;
-}
-</style>
+<style></style>
