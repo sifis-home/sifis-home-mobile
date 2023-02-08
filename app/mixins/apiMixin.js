@@ -11,6 +11,21 @@ export default {
     };
   },
   methods: {
+    apiLogin(username, password) {
+      return axios
+        .post('login', { username: username, password: password })
+        .then((response) => {
+          this.secureStorage.setSync({
+            key: tokenName,
+            value: response.data.token,
+          });
+          axios.defaults.headers.common['Authorization'] =
+            'Bearer ' + response.data.token;
+          return response.data;
+        })
+        .catch((error) => this.onError(error));
+    },
+
     onError(error) {
       console.log('ON ERROR');
       console.log(error);

@@ -4,48 +4,18 @@
       <Label text="Home" class="font-bold text-lg" />
     </ActionBar>
 
-    <!--    <StackLayout backgroundColor="#3c495e"> -->
     <StackLayout>
-      <Button class="list-button" text="Settings" @tap="logMessage" />
-      <Button class="list-button" text="List of devices" @tap="logMessage" />
-
-      <StackLayout class="input-field">
-        <TextField
-          height="50"
-          class="list-button input m-0"
-          hint="email"
-          width="90%"
-          keyboardType="email"
-          autocorrect="false"
-          autocapitalizationType="none"
-          v-model="email"
-          returnKeyType="next"
-        ></TextField>
-      </StackLayout>
-      <StackLayout class="input-field">
-        <TextField
-          height="50"
-          width="90%"
-          class="list-button input m-0"
-          #password
-          hint="password"
-          secure="true"
-          v-model="password"
-        ></TextField>
-      </StackLayout>
-
-      <Button class="btn-primary" text="login" @tap="login"></Button>
-    </StackLayout>
-    <!--
-    <GridLayout backgroundColor="#3c495e">
-      <Button class="list-button" :text="message" @tap="logMessage" />
-      <Label
-        class="text-xl align-middle text-center text-gray-500 bordered"
-        :text="message"
-        @tap="logMessage"
+      <Image
+        class="logo"
+        src="~/include/sifis-home-logo.png"
+        height="120"
+        verticalAlignment="center"
       />
-    </GridLayout>
--->
+
+      <Button class="list-button" text="Login" @tap="login" />
+      <Button class="list-button" text="List of devices" @tap="logMessage" />
+      <Button class="list-button" text="Settings" @tap="logMessage" />
+    </StackLayout>
   </Page>
 </template>
 
@@ -67,12 +37,27 @@ export default Vue.extend({
     };
   },
   methods: {
+    login() {
+      login('Please enter your credentials', 'Username', 'Password').then(
+        (result) => {
+          this.apiLogin(result.userName, result.password);
+          this.apiLogin(result.userName, result.password).then((response) => {
+            if (response !== undefined) {
+              this.$navigateTo(TargetListView);
+            } else {
+              alert({
+                title: 'Login failed',
+                okButtonText: 'Ok',
+                message: 'Please check your password or email',
+              });
+            }
+          });
+        }
+      );
+    },
     logMessage() {
       console.log('You have tapped the message!');
       alert('You have tapped the message!');
-    },
-    login() {
-      console.log('login');
     },
   },
 });
@@ -89,5 +74,9 @@ export default Vue.extend({
   height: 80px;
   border-color: #000000;
   border-width: 2;
+}
+
+.logo {
+  margin: 40px;
 }
 </style>

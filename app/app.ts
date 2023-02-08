@@ -4,7 +4,7 @@ import axios from 'axios';
 
 declare let __DEV__: boolean;
 
-axios.defaults.baseURL = 'https://dev.riots.fi/mobile/';
+axios.defaults.baseURL = 'https://sifis.riots.fi/';
 
 // Prints Vue logs when --env.production is *NOT* set while building
 Vue.config.silent = !__DEV__;
