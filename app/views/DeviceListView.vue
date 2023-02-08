@@ -4,17 +4,14 @@
       <Label text="Device List" class="font-bold text-lg" />
     </ActionBar>
 
-    <StackLayout>
+    <StackLayout class="m-16">
       <Image
         class="logo"
         src="~/include/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
       />
-      <Button class="list-button" text="Settings" @tap="logMessage" />
-    </StackLayout>
 
-    <StackLayout class="m-16">
       <RadListView
         for="device in devices"
         separatorColor="transparent"
@@ -22,7 +19,7 @@
       >
         <v-template>
           <StackLayout>
-            <GridLayout class="riots-list--item" rows="auto" columns="auto, *">
+            <GridLayout class="list--item" rows="auto" columns="auto, *">
               <Image
                 row="0"
                 col="0"
@@ -34,7 +31,7 @@
                 col="1"
                 colSpan="2"
                 :text="device.name"
-                class="h2 m-l-4 text-riots--black"
+                class="h2 m-l-4 text--black"
               />
             </GridLayout>
           </StackLayout>

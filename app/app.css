@@ -2,7 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+.fas {
+  font-family: 'Font Awesome 5 Free', 'fa-solid-900';
+  font-weight: 900;
+}
+
 ActionBar {
-    background-color: #65adf1;
-    color: white;
+  background-color: #65adf1;
+  color: white;
+}
+
+.text--black {
+  color: #1d1f21;
+}
+
+.list--item {
+  padding: 16;
+  margin-bottom: 16;
+  background-color: #fff;
+  border-color: rgba($color: #000000, $alpha: 0.1);
+  border-width: 1;
+  box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);
 }
