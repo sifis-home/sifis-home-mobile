@@ -13,8 +13,8 @@
       />
 
       <Button class="list-button" text="Login" @tap="login" />
-      <Button class="list-button" text="List of devices" @tap="logMessage" />
-      <Button class="list-button" text="Settings" @tap="logMessage" />
+      <Button class="list-button" text="List of devices" @tap="deviceList" />
+      <Button class="list-button" text="Settings" @tap="settings" />
     </StackLayout>
   </Page>
 </template>
@@ -22,6 +22,8 @@
 <script lang="ts">
 import Vue from 'nativescript-vue';
 import ApiMixin from '@/mixins/apiMixin';
+import DeviceListView from './DeviceListView.vue';
+import SettingsView from './SettingsView.vue';
 
 export default Vue.extend({
   computed: {
@@ -48,26 +50,24 @@ export default Vue.extend({
               alert({
                 title: 'Login failed',
                 okButtonText: 'Ok',
-                message: 'Please check your password or email',
+                message: 'Please check your password and email',
               });
             }
           });
         }
       );
     },
-    logMessage() {
-      console.log('You have tapped the message!');
-      alert('You have tapped the message!');
+    settings() {
+      this.$navigateTo(SettingsView);
+    },
+    deviceList() {
+      this.$navigateTo(DeviceListView);
     },
   },
 });
 </script>
 
 <style>
-/* .info {
-    font-size: 20;
-  } */
-
 .list-button {
   background-color: #fff;
   margin: 15px;
