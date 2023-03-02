@@ -12,9 +12,15 @@
         verticalAlignment="center"
       />
 
-      <Button class="list-button" text="Login" @tap="login" />
-      <Button class="list-button" text="List of devices" @tap="deviceList" />
+      <Button class="list-button" text="NSSD Control" @tap="deviceList" />
       <Button class="list-button" text="Settings" @tap="settings" />
+
+      <Button class="list-button" text="Marketplace" @tap="marketplace" />
+      <Button class="list-button" text="Smart devices" @tap="deviceList" />
+      <Button class="list-button" text="Voice commands" @tap="settings" />
+      <Button class="list-button" text="View logs" @tap="settings" />
+
+      <Button class="list-button" text="Login" @tap="login" />
     </StackLayout>
   </Page>
 </template>
@@ -23,6 +29,7 @@
 import Vue from 'nativescript-vue';
 import ApiMixin from '@/mixins/apiMixin';
 import DeviceListView from './DeviceListView.vue';
+import MarketplaceView from './MarketplaceView.vue';
 import SettingsView from './SettingsView.vue';
 
 export default Vue.extend({
@@ -62,6 +69,9 @@ export default Vue.extend({
       this.$navigateTo(SettingsView);
     },
     deviceList() {
+      this.$navigateTo(DeviceListView);
+    },
+    marketplace() {
       this.$navigateTo(DeviceListView);
     },
   },
