@@ -20,7 +20,7 @@
       <Button class="list-button" text="Voice commands" @tap="settings" />
       <Button class="list-button" text="View logs" @tap="settings" />
 
-      <Button class="list-button" text="Login" @tap="login" />
+      <Button class="list-button" :text="loginLabel" @tap="login" />
     </StackLayout>
   </Page>
 </template>
@@ -43,27 +43,43 @@ export default Vue.extend({
     return {
       email: '',
       password: '',
+      loginLabel: 'Login',
     };
   },
   methods: {
     login() {
-      login('Please enter your credentials', 'Username', 'Password').then(
-        (result) => {
-          if (result.result) {
-            this.apiLogin(result.userName, result.password).then((response) => {
-              if (response !== undefined) {
-                this.$navigateTo(TargetListView);
-              } else {
-                alert({
-                  title: 'Login failed',
-                  okButtonText: 'Ok',
-                  message: 'Please check your password and email',
-                });
-              }
-            });
+      if (this.getToken()) {
+        alert({
+          title: 'Token',
+          okButtonText: 'Ok',
+          message: this.getToken(),
+        });
+      } else {
+        login('Please enter your credentials', 'Username', 'Password').then(
+          (result) => {
+            if (result.result) {
+              this.apiLogin(result.userName, result.password).then(
+                (response) => {
+                  if (response !== undefined) {
+                    this.loginLabel = 'Show token';
+                    alert({
+                      title: 'Login Success',
+                      okButtonText: 'Ok',
+                      message: response,
+                    });
+                  } else {
+                    alert({
+                      title: 'Login failed',
+                      okButtonText: 'Ok',
+                      message: 'Please check your password and email',
+                    });
+                  }
+                }
+              );
+            }
           }
-        }
-      );
+        );
+      }
     },
     settings() {
       this.$navigateTo(SettingsView);
