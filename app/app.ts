@@ -6,7 +6,7 @@ import RadListView from 'nativescript-ui-listview/vue';
 
 declare let __DEV__: boolean;
 
-axios.defaults.baseURL = 'https://yggio.sifis-home.eu/api/';
+//axios.defaults.baseURL = 'https://yggio.sifis-home.eu/api/';
 
 // Prints Vue logs when --env.production is *NOT* set while building
 Vue.config.silent = !__DEV__;

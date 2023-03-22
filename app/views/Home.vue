@@ -88,7 +88,7 @@ export default Vue.extend({
       this.$navigateTo(DeviceListView);
     },
     marketplace() {
-      this.$navigateTo(DeviceListView);
+      this.$navigateTo(MarketplaceView);
     },
   },
 });

@@ -35,17 +35,20 @@ ActionBar {
 
 .list--item {
   padding: 16;
+  width: 100%;
+  box-sizing: border-box;
   margin-bottom: 16;
   background-color: #fff;
-  border-color: rgba($color: #000000, $alpha: 0.1);
+  /*border-color: rgba($color: #000000, $alpha: 0.1);*/
   border-width: 1;
-  box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);
+  box-shadow: 1 1 rgba($color: #000000, $alpha: 0.2);
 }
 
 .list-button {
   background-color: #fff;
   margin: 15px;
-  height: 80px;
+  padding: 10px;
+  min-height: 80px;
   border-color: #000000;
   border-width: 1;
 }
