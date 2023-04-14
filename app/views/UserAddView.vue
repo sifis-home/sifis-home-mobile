@@ -1,7 +1,7 @@
 <template>
   <Page>
     <ActionBar>
-      <Label text="Settings" class="font-bold text-lg" />
+      <Label text="Add new user" class="font-bold text-lg" />
     </ActionBar>
 
     <StackLayout>
@@ -12,32 +12,34 @@
         verticalAlignment="center"
       />
 
-      <Label text="Server IP Address" class="text-label" />
+      <Label text="Username" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="list-button"
-          hint="IP address"
-          v-model="ipAddress"
+          hint="Username"
+          v-model="username"
           returnKeyType="next"
         ></TextField>
       </StackLayout>
 
-      <Label text="DHT shared key" class="text-label" />
+      <Label text="Password" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="list-button"
-          hint="32 bytes in hex format"
-          v-model="sharedKey"
+          hint="Password"
+          v-model="password1"
+          secure="true"
           returnKeyType="next"
         ></TextField>
       </StackLayout>
 
-      <Label text="User name" class="text-label" />
+      <Label text="Confirm password" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="list-button"
-          hint="User name"
-          v-model="userName"
+          hint="Confirm password"
+          v-model="password2"
+          secure="true"
           returnKeyType="next"
         ></TextField>
       </StackLayout>
@@ -53,15 +55,19 @@ import Vue from 'nativescript-vue';
 export default Vue.extend({
   data() {
     return {
-      ipAddress: '127.0.0.1',
-      sharedKey: '360ba80f4f84eb2079416775644402d0',
-      userName: 'John Doe',
+      username: '',
+      password1: '',
+      password2: '',
     };
   },
   methods: {
     save() {
-      console.log('You have tapped the message!');
-      alert('Settings saved!');
+      if(this.password1 != this.password2) {
+        alert('Passwords do not match!');
+      }
+      else {
+        alert('User added!');
+      }
     },
   },
 });

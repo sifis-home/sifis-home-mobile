@@ -1,10 +1,11 @@
 <template>
   <Page>
+
     <ActionBar>
       <Label text="Device view" class="font-bold text-lg" />
     </ActionBar>
 
-    <StackLayout class="m-16">
+    <StackLayout>
 
       <Label text="Marketplace: list of repositories" class="text-center font-bold text-lg" />
 
@@ -21,27 +22,30 @@
 
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading></ActivityIndicator>
 
-      <RadListView
-        style="margin-top: 50px;"
-        for="repository in repositories"
-        class="list-group h-full"
+      <GridLayout rows="*" columns="*">
 
-      >
+        <RadListView
+          style="margin-top: 50px;"
+          for="repository in repositories"
+          class="list-group h-full"
 
-        <v-template>
-          <Button class="list-button" textWrap="true" @tap="$event => getRepository(repository.name)">
-              <FormattedString>
-                <Span :text="repository.name" />
-                <Span text="\n" />
-                <Span :text="repository.last_updated"/>
-                <Span text="\n" />
-                <Span :text="repository.status_description" />
-              </FormattedString>
-          </Button>
+        >
 
-        </v-template>
+          <v-template>
+            <Button class="list-button" textWrap="true" @tap="$event => getRepository(repository.name)">
+                <FormattedString>
+                  <Span :text="repository.name" />
+                  <Span text="\n" />
+                  <Span :text="repository.last_updated"/>
+                  <Span text="\n" />
+                  <Span :text="repository.status_description" />
+                </FormattedString>
+            </Button>
 
-      </RadListView>
+          </v-template>
+
+        </RadListView>
+      </GridLayout>
 
 
     </StackLayout>
@@ -51,9 +55,9 @@
   </Page>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'nativescript-vue';
-import ApiMixin from '@/mixins/apiMixin';
+import apiMixin from '@/mixins/apiMixin';
 
 export default Vue.extend({  
 
@@ -61,7 +65,7 @@ export default Vue.extend({
     id: Number,
     name: String
   },
-  mixins: [ApiMixin],
+  mixins: [apiMixin],
 
   data() {
     return {

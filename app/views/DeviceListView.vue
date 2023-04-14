@@ -4,7 +4,7 @@
       <Label text="Device List" class="font-bold text-lg" />
     </ActionBar>
 
-    <StackLayout class="m-16">
+    <StackLayout>
       <Image
         class="logo"
         src="~/include/sifis-home-logo.png"
@@ -39,7 +39,7 @@
   </Page>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'nativescript-vue';
 import DeviceView from './DeviceView.vue';
 

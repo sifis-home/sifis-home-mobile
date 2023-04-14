@@ -4,12 +4,14 @@ import axios from 'axios';
 import FontIcon from 'nativescript-vue-fonticon';
 import RadListView from 'nativescript-ui-listview/vue';
 
-declare let __DEV__: boolean;
+
+//declare let __DEV__: boolean;
 
 //axios.defaults.baseURL = 'https://yggio.sifis-home.eu/api/';
 
 // Prints Vue logs when --env.production is *NOT* set while building
-Vue.config.silent = !__DEV__;
+//Vue.config.silent = !__DEV__;
+Vue.config.silent = true;
 
 Vue.use(RadListView);
 

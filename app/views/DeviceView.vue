@@ -16,12 +16,11 @@
       <Label :text="name" class="text-center font-bold text-lg" />
       <Image
         class="logo"
-        src="~/include/riots_thermostat.jpg"
-        height="300"
+        src="~/include/riots_thermostat.png"
+        height="200"
         verticalAlignment="center"
       />
       <Label text="22.2°C" class="text-center font-bold text-lg" />
-
 
     </StackLayout>
   </Page>
@@ -30,7 +29,7 @@
   </Page>
 </template>
 
-<script lang="ts">
+<script>
 import Vue from 'nativescript-vue';
 
 export default Vue.extend({  

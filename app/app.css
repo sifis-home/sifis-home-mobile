@@ -33,16 +33,34 @@ ActionBar {
   color: #1d1f21;
 }
 
+.listview--item {
+  padding: 6;
+  margin: 5;
+  background-color: #FFF;
+  border-color: #000000;
+  border-width: 1;
+  /*box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);*/
+}
+
+
 .list--item {
-  padding: 16;
-  width: 100%;
+  padding: 20;
   box-sizing: border-box;
-  margin-bottom: 16;
+  margin: 5;
   background-color: #fff;
   /*border-color: rgba($color: #000000, $alpha: 0.1);*/
   border-width: 1;
   box-shadow: 1 1 rgba($color: #000000, $alpha: 0.2);
 }
+.ns-dark.list--item {
+  padding: 16;
+  margin-bottom: 16;
+  background-color: #2d2f32;
+  border-color: rgba($color: #3e3b3b, $alpha: 0.10);
+  border-width: 1;
+  box-shadow: 1 1 rgba($color: #424040, $alpha: 0.1);
+}
+
 
 .list-button {
   background-color: #fff;
@@ -65,6 +83,7 @@ ActionBar {
 .list-group {
   margin: 0;
   padding: 0;
+  width: 100%;
 }
 .list-group-item {
   margin: 0;
