@@ -16,9 +16,7 @@
         verticalAlignment="center"
       />
 
-      <Label v-if="repository_name != ''" :text="repository_name" class="text-center font-bold text-lg" />
-      <Label v-if="repository_count != ''" :text="'Repositories ' + repository_count" class="text-center font-bold text-lg" />
-      <Label v-if="repository_digest != ''" :text="repository_digest" class="text-center font-bold text-lg" />
+      <Label v-if="repository_count != ''" :text="'Total ' + repository_count + ' packages'" class="text-center font-bold text-lg" />
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading></ActivityIndicator>
 
       <GridLayout rows="*" columns="*">
@@ -27,18 +25,12 @@
           style="margin-top: 50px;"
           for="container in containers"
           class="list-group h-full"
-
         >
 
           <v-template>
-            <Button class="list-button" textWrap="true" @tap="$event => showContainer(container)">
-                <FormattedString>
-                  <Span :text="container.name" />
-                  <Span text="\n" />
-                  <Span :text="container.updated_at"/>
-                  <Span text="\n" />
-                  <Span :text="container.repository.description" />
-                </FormattedString>
+            <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(container)">
+              <Span :text="container.name + '\n'" />
+              <Span class="text-xs" :text="'Last updated: ' + container.updated_at"/>
             </Button>
 
           </v-template>
@@ -71,9 +63,7 @@ export default Vue.extend({
     return {
       containers: [],
       loading: true,
-      repository_name: '',
       repository_count: '',
-      repository_digest: '',
     }
   },
 
@@ -94,8 +84,8 @@ export default Vue.extend({
     else {
       this.getGithubContainers().then((response) => {
         this.loading = false;
-        console.log(response);
         this.containers = response;
+        this.repository_count = this.containers.length;
       });
     }
   },

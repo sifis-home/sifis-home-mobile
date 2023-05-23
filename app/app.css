@@ -36,12 +36,11 @@ ActionBar {
 .listview--item {
   padding: 6;
   margin: 5;
-  background-color: #FFF;
+  background-color: #fff;
   border-color: #000000;
   border-width: 1;
   /*box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);*/
 }
-
 
 .list--item {
   padding: 20;
@@ -56,11 +55,10 @@ ActionBar {
   padding: 16;
   margin-bottom: 16;
   background-color: #2d2f32;
-  border-color: rgba($color: #3e3b3b, $alpha: 0.10);
+  border-color: rgba($color: #3e3b3b, $alpha: 0.1);
   border-width: 1;
   box-shadow: 1 1 rgba($color: #424040, $alpha: 0.1);
 }
-
 
 .list-button {
   background-color: #fff;
@@ -84,8 +82,10 @@ ActionBar {
   margin: 0;
   padding: 0;
   width: 100%;
+  color: #000000;
 }
 .list-group-item {
   margin: 0;
   padding: 0;
+  color: #000000;
 }

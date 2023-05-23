@@ -17,11 +17,22 @@
       <Label :text="container.repository.full_name" class="text-center  text-md" />
 
       <TextView :text="container.repository.description" editable=false />
-      <TextView :text="container.repository.html_url" editable=false />
+      <TextView :text="container.repository.html_url + '\nCreated: ' + container.created_at + '\nLast updated: ' + container.updated_at" editable=false />      
+
+      <Button v-show="!installed && !installing" class="list-button" text="Install this application" @tap="install" />
+
+      <ActivityIndicator v-show="installing" style="margin-top: 50px;" :busy=installing />
+      <Label text="Installing application ..." v-show="installing" class="text-center  text-md"/>
+      <Label text="Application installed" v-show="installed" class="text-center font-bold font-green text-md"/>
 
     </StackLayout>
   </Page>
 </template>
+        alert({
+          title: 'Installing',
+          okButtonText: 'Ok',
+          message: 'Installing application ...',
+        });
 
   </Page>
 </template>
@@ -34,6 +45,23 @@ export default Vue.extend({
   props: {
     container: Array,
   },
+
+  data() {
+    return {
+      installing: false,
+      installed: false,
+    }
+  },
+
+  methods: {
+    install() {
+        this.installing = true,
+        this.myTimeout = setTimeout(() => {
+          this.installing = false;
+          this.installed = true;
+        }, 2000);
+    }
+  }
 
 });
 </script>

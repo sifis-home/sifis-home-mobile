@@ -104,7 +104,7 @@ export default {
 
     getDhtAll() {
       console.log('getDhtAll: ');
-
+      /*
       Http.request({
         url: 'http://sifis-device2.iit.cnr.it:8000/dht/get_all',
         method: 'GET',
@@ -117,16 +117,14 @@ export default {
           console.log(e);
         }
       );
-      /*      
+      */
       return axios
         .get('http://sifis-device2.iit.cnr.it:8000/dht/get_all')
         .then((response) => {
           console.log(response.data);
-
           return response.data;
         })
         .catch((error) => this.onError(error));
-        */
     },
 
     getGithubToken() {
@@ -136,7 +134,7 @@ export default {
     getGithubContainers() {
       return axios
         .get(
-          'https://api.github.com/orgs/sifis-home/packages?package_type=container',
+          'https://api.github.com/orgs/sifis-home/packages?package_type=container&per_page=100&sort=updated',
           {
             headers: {
               Authorization: 'Bearer ' + this.github_token,

@@ -12,26 +12,23 @@
         verticalAlignment="center"
       />
 
-      <RadListView
-        for="device in devices"
-        separatorColor="transparent"
-        class="list-group h-full"
-        @itemTap="loadDevice"
-      >
-        <v-template>
-          <StackLayout>
-            <GridLayout class="list--item" rows="auto" columns="auto, *">
-              <Label
-                row="0"
-                col="1"
-                colSpan="3"
-                :text="device.name"
-                class="h2 m-l-4 text--black"
-              />
-            </GridLayout>
-          </StackLayout>
-        </v-template>
-      </RadListView>
+      <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading />
+
+      <GridLayout rows="*" columns="*">
+        <RadListView
+          style="margin-top: 50px;"
+          for="device in devices"
+          class="list-group h-full"
+        >
+          <v-template>
+            <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
+              <Span :text="device.name" />
+            </Button>
+          </v-template>
+
+        </RadListView>
+      </GridLayout>
+
     </StackLayout>
   </Page>
 </template>
@@ -42,36 +39,46 @@
 <script>
 import Vue from 'nativescript-vue';
 import DeviceView from './DeviceView.vue';
+import ApiMixin from '@/mixins/apiMixin';
 
 export default Vue.extend({
+  mixins: [ApiMixin],
 
   data() {
     return {
-      devices: [ 
-        { id: 1, name: "Living room thermostat" },
-        { id: 2, name: "Water leak sensor" },
-        { id: 3, name: "Fridge" },
-        { id: 4, name: "Outdoor weather" },
-        { id: 5, name: "Main door camera" },
-      ],
+      loading: true,
+      devices: [],
     };
-  },  
+  },
+  created() {
+
+    this.getDhtAll().then((response) => {
+      console.log("Done");
+      console.log(response);
+
+      this.devices.push({ id: 1, name: "Living room thermostat" });
+      this.devices.push({ id: 2, name: "Outdoor weather" });
+      this.devices.push({ id: 3, name: "Fridge" });
+      this.devices.push({ id: 4, name: "Main door camera" });
+      this.devices.push({ id: 5, name: "Water leak sensor" });
+      console.log(this.devices);
+
+
+      this.loading = false;
+    });
+  },
   methods: {
-    logMessage() {
-      console.log('You have tapped the message!');
-      alert('You have tapped the message!');
-    },
-    loadDevice(event) {
+    loadDevice(device) {
       this.$navigateTo(DeviceView, {
         props: {
-          id: event.item.id,
-          name: event.item.name
+          id: device.id,
+          name: device.name
         }
       });     
-},
+    },
 },
 });
 </script>
 
-<style>
+<style scoped>
 </style>
