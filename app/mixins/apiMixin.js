@@ -9,7 +9,8 @@ export default {
   data() {
     return {
       yggio_token: '',
-      github_token: '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',
+      github_token: '<add github token here>',
+      /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
     };
   },
 
