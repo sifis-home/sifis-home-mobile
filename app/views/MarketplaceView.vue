@@ -18,27 +18,26 @@
 
       <Label v-if="repository_name != ''" :text="repository_name" class="text-center font-bold text-lg" />
       <Label v-if="repository_count != ''" :text="'Repositories ' + repository_count" class="text-center font-bold text-lg" />
-      <Label v-if="repository_digest != ''" :text="repository_digest" class="text-center font-bold text-lg" />      
-
+      <Label v-if="repository_digest != ''" :text="repository_digest" class="text-center font-bold text-lg" />
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading></ActivityIndicator>
 
       <GridLayout rows="*" columns="*">
 
         <RadListView
           style="margin-top: 50px;"
-          for="repository in repositories"
+          for="container in containers"
           class="list-group h-full"
 
         >
 
           <v-template>
-            <Button class="list-button" textWrap="true" @tap="$event => getRepository(repository.name)">
+            <Button class="list-button" textWrap="true" @tap="$event => showContainer(container)">
                 <FormattedString>
-                  <Span :text="repository.name" />
+                  <Span :text="container.name" />
                   <Span text="\n" />
-                  <Span :text="repository.last_updated"/>
+                  <Span :text="container.updated_at"/>
                   <Span text="\n" />
-                  <Span :text="repository.status_description" />
+                  <Span :text="container.repository.description" />
                 </FormattedString>
             </Button>
 
@@ -58,6 +57,7 @@
 <script>
 import Vue from 'nativescript-vue';
 import apiMixin from '@/mixins/apiMixin';
+import ApplicationView from './ApplicationView.vue';
 
 export default Vue.extend({  
 
@@ -69,7 +69,7 @@ export default Vue.extend({
 
   data() {
     return {
-      repositories: [],
+      containers: [],
       loading: true,
       repository_name: '',
       repository_count: '',
@@ -78,38 +78,22 @@ export default Vue.extend({
   },
 
   methods: {
-    getRepository(event) {
-      console.log("GET REPOSITORY " + event);
-      this.loading = true;
-      this.repository_name = event;
-      this.repository_count = '';
-      this.repository_digest = '';
-      this.getDockerRepository(event).then((response) => {
-        console.log("Done");
-        console.log(response.count);
-        this.repository_count = response.count;
-        if(response.count > 0) {
-          this.repository_digest = response.results[0].digest;
+    showContainer(container) {
+      this.$navigateTo(ApplicationView, {
+        props: {
+          container: container
         }
-        this.loading = false;
       });
     }
   },
 
-
   created() {
-    console.log("Marketplace Created");
     this.loading = true;
-
-    this.dockerLogin().then((response) => {
-      console.log('dockerLogin OK');
-      this.getDockerRepositories().then((response) => {
-        console.log('getRepositories OK');
-        this.loading = false;
-        console.log(response);
-        this.repositories = response;
-      });
-
+    this.getGithubContainers().then((response) => {
+      console.log('getGithubContainers OK');
+      this.loading = false;
+      console.log(response);
+      this.containers = response;
     });
   },
 

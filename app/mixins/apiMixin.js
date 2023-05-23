@@ -1,94 +1,36 @@
 import axios from 'axios';
-import { SecureStorage } from '@nativescript/secure-storage';
-import { Device } from '@nativescript/core/platform';
+import { getString, setString } from '@nativescript/core/application-settings';
+import { Http, HttpResponse } from '@nativescript/core';
 
 const tokenName = 'sifis-token';
+const yggioUrl = 'https://yggio.sifis-home.eu/'
 
 export default {
   data() {
     return {
-      secureStorage: new SecureStorage(),
-      dockerhub_token: '',
+      yggio_token: '',
+      github_token: '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',
     };
   },
+
   methods: {
-
     checkIsLoggedIn() {
-      const local_token = this.secureStorage.getSync({ key: tokenName });
-      // Todo: verify token, check that user has really logged in
-      if (local_token) {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + local_token;
+      this.yggio_token = getString(tokenName);
+      if (this.yggio_token) {
+        axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.yggio_token;
       }
-    },
-    getUserData() {
-      return axios.get('https://yggio.sifis-home.eu/api/users/me').then(response => {
-        return (response.data);
-      }).catch(error => this.onError(error));
-    },
-
-    getUserRoles(/*organization, user_id, token*/) {
-      console.log("getUserRoles");
-      return axios.get('https://yggio.sifis-home.eu/auth/realms/yggio/account').then(response => {
-        console.log(response.data);
-        return (response.data);
-      }).catch(error => this.onError(error));
-    },
-      
-    getOrganization() {
-      return axios.get('https://yggio.sifis-home.eu/api/organizations').then(response => {
-        console.log("Get organizations");
-        console.log(response);
-        console.log(response);
-        return (response.data[0]);
-      }).catch(error => this.onError(error));
-    },
-
-    getUserByUsername(username) {
-      console.log("getUserByUsername: https://yggio.sifis-home.eu/api/users/" + username);
-
-      return axios.get('https://yggio.sifis-home.eu/api/users/' + username).then(response => {
-        console.log(response.data);
-
-        return (response.data);
-      }).catch(error => this.onError(error));
-    },
-
-
-    
-    getUsers(user_list) {
-      let userIds = "";
-      user_list.forEach(userID => {
-        if(userIds != "") {
-          userIds += "&"
-        }
-        userIds += "userIds[]=" + userID;
-      });
-      console.log("Seek users");
-      return axios.get('https://yggio.sifis-home.eu/api/users/seek?userIds[]=' + userIds).then(response => {
-        console.log("Then");
-        console.log(response.data);
-        return (response.data);
-      }).catch(error => this.onError(error));
-    },
-
-
-    apiLogout() {
-      axios.defaults.headers.common['Authorization'] = '';
-      this.secureStorage.setSync({ key: tokenName, value: '' });
     },
 
     apiLogin(username, password) {
       return axios
-        .post('https://yggio.sifis-home.eu/api/auth/local', {
+        .post(yggioUrl + 'api/auth/local', {
           username: username,
           password: password,
         })
         .then((response) => {
           let returned_token = response.data.token;
-          this.secureStorage.setSync({
-            key: tokenName,
-            value: response.data.token,
-          });
+          setString(tokenName, returned_token);
+          this.yggio_token = returned_token;
           axios.defaults.headers.common['Authorization'] =
             'Bearer ' + returned_token;
           return returned_token;
@@ -96,55 +38,114 @@ export default {
         .catch((error) => this.onError(error));
     },
 
-    /* Start of Dockerhub stuff => */
-    getDockerToken() {
-      return this.dockerhub_token;
+    apiLogout() {
+      axios.defaults.headers.common['Authorization'] = '';
+      this.yggio_token = '';
+      setString(tokenName, '');
     },
-    dockerLogin() {
+
+    getUserData() {
       return axios
-        .post('https://hub.docker.com/v2/users/login', {
-          username: 'sifishome',
-          password: 'dckr_pat_TYDAIOs8Z8JGybpEb4YcWuOvyxI',
-        })
+        .get('api/users/me')
         .then((response) => {
-          console.log('Login done');
-          // console.log(response);
-          this.dockerhub_token = response.data.token;
-          axios.defaults.headers.common['Authorization'] =
-            'Bearer ' + response.data.token;
-          return response.data.token;
+          return response.data;
         })
         .catch((error) => this.onError(error));
     },
-    getDockerRepositories() {
+
+    getUserRoles() {
       return axios
-        .get('https://hub.docker.com/v2/repositories/sifishome')
+        .get(yggioUrl + 'auth/realms/yggio/account')
         .then((response) => {
-          console.log('getDockerRepositories');
-          console.log(response.data.count);
-          return response.data.results;
+          //console.log(response.data);
+          return response.data;
         })
         .catch((error) => this.onError(error));
     },
-    getDockerRepository(repoName) {
+
+    getOrganization() {
+      return axios
+        .get(yggioUrl + 'api/organizations')
+          .then((response) => {
+            //console.log('Get organizations');
+            //console.log(response);
+            return response.data[0];
+          })
+        .catch((error) => this.onError(error));
+    },
+
+    getUserByUsername(username) {
+      return axios
+        .get(yggioUrl + 'api/users/' + username)
+          .then((response) => {
+            //console.log(response.data);
+            return response.data;
+          })
+        .catch((error) => this.onError(error));
+    },
+
+    getUsers(user_list) {
+      let userIds = '';
+      user_list.forEach((userID) => {
+        if (userIds != '') {
+          userIds += '&';
+        }
+        userIds += 'userIds[]=' + userID;
+      });
+      return axios
+        .get(yggioUrl + 'api/users/seek?userIds[]=' + userIds)
+          .then((response) => {
+            return response.data;
+          })
+        .catch((error) => this.onError(error));
+    },
+
+
+    getDhtAll() {
+      console.log('getDhtAll: ');
+
+      Http.request({
+        url: 'http://sifis-device2.iit.cnr.it:8000/dht/get_all',
+        method: 'GET',
+        headers: { Authorization: 'Bearer ' + this.yggio_token },
+      }).then(
+        (response) => {
+          console.log('Http GET Result: ' + response);
+        },
+        (e) => {
+          console.log(e);
+        }
+      );
+      /*      
+      return axios
+        .get('http://sifis-device2.iit.cnr.it:8000/dht/get_all')
+        .then((response) => {
+          console.log(response.data);
+
+          return response.data;
+        })
+        .catch((error) => this.onError(error));
+        */
+    },
+
+
+    getGithubContainers() {
+      axios.defaults.headers.common['Authorization'] =
+        'Bearer ' + this.github_token;
       return axios
         .get(
-          'https://hub.docker.com/v2/namespaces/sifishome/repositories/' +
-            repoName +
-            '/tags'
+          'https://api.github.com/orgs/sifis-home/packages?package_type=container'
         )
         .then((response) => {
-          console.log('getDockerRepository');
+          console.log('getGithubContainers');
           console.log(response.data);
           return response.data;
         })
         .catch((error) => this.onError(error));
     },
-    /* <= End of dockerhub stuff */
 
     onError(error) {
-      console.log('ON ERROR');
-      console.log(error);
+      console.log('Catch Error: ' + error);
       // NOP
     },
   },
