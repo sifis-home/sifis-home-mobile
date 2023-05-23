@@ -14,9 +14,10 @@
       />
 
       <Label :text="container.name" class="text-center font-bold text-lg" />
-      <Label :text="container.repository.full_name" class="text-md" />
-      <Label :text="container.repository.description" class="text-md" />
-      <Label :text="container.repository.html_url" class="text-md" />
+      <Label :text="container.repository.full_name" class="text-center  text-md" />
+
+      <TextView :text="container.repository.description" editable=false />
+      <TextView :text="container.repository.html_url" editable=false />
 
     </StackLayout>
   </Page>

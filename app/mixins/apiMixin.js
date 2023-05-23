@@ -3,13 +3,13 @@ import { getString, setString } from '@nativescript/core/application-settings';
 import { Http, HttpResponse } from '@nativescript/core';
 
 const tokenName = 'sifis-token';
-const yggioUrl = 'https://yggio.sifis-home.eu/'
+const yggioUrl = 'https://yggio.sifis-home.eu/';
 
 export default {
   data() {
     return {
       yggio_token: '',
-      github_token: '<add github token here>',
+      github_token: '',
       /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
     };
   },
@@ -18,7 +18,8 @@ export default {
     checkIsLoggedIn() {
       this.yggio_token = getString(tokenName);
       if (this.yggio_token) {
-        axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.yggio_token;
+        axios.defaults.headers.common['Authorization'] =
+          'Bearer ' + this.yggio_token;
       }
     },
 
@@ -47,7 +48,7 @@ export default {
 
     getUserData() {
       return axios
-        .get('api/users/me')
+        .get(yggioUrl + 'api/users/me')
         .then((response) => {
           return response.data;
         })
@@ -67,21 +68,21 @@ export default {
     getOrganization() {
       return axios
         .get(yggioUrl + 'api/organizations')
-          .then((response) => {
-            //console.log('Get organizations');
-            //console.log(response);
-            return response.data[0];
-          })
+        .then((response) => {
+          //console.log('Get organizations');
+          //console.log(response);
+          return response.data[0];
+        })
         .catch((error) => this.onError(error));
     },
 
     getUserByUsername(username) {
       return axios
         .get(yggioUrl + 'api/users/' + username)
-          .then((response) => {
-            //console.log(response.data);
-            return response.data;
-          })
+        .then((response) => {
+          //console.log(response.data);
+          return response.data;
+        })
         .catch((error) => this.onError(error));
     },
 
@@ -95,12 +96,11 @@ export default {
       });
       return axios
         .get(yggioUrl + 'api/users/seek?userIds[]=' + userIds)
-          .then((response) => {
-            return response.data;
-          })
+        .then((response) => {
+          return response.data;
+        })
         .catch((error) => this.onError(error));
     },
-
 
     getDhtAll() {
       console.log('getDhtAll: ');
@@ -129,17 +129,23 @@ export default {
         */
     },
 
+    getGithubToken() {
+      return this.github_token;
+    },
 
     getGithubContainers() {
-      axios.defaults.headers.common['Authorization'] =
-        'Bearer ' + this.github_token;
       return axios
         .get(
-          'https://api.github.com/orgs/sifis-home/packages?package_type=container'
+          'https://api.github.com/orgs/sifis-home/packages?package_type=container',
+          {
+            headers: {
+              Authorization: 'Bearer ' + this.github_token,
+            },
+          }
         )
         .then((response) => {
-          console.log('getGithubContainers');
-          console.log(response.data);
+          //console.log('getGithubContainers');
+          //console.log(response.data);
           return response.data;
         })
         .catch((error) => this.onError(error));

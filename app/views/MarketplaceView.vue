@@ -7,7 +7,7 @@
 
     <StackLayout>
 
-      <Label text="Marketplace: list of repositories" class="text-center font-bold text-lg" />
+      <Label text="Marketplace: list of repositories" class="text-center font-bold text-lg content" />
 
       <Image
         class="logo"
@@ -88,13 +88,16 @@ export default Vue.extend({
   },
 
   created() {
-    this.loading = true;
-    this.getGithubContainers().then((response) => {
-      console.log('getGithubContainers OK');
-      this.loading = false;
-      console.log(response);
-      this.containers = response;
-    });
+    if(this.getGithubToken() == "") {
+      this.containers = [];
+    }
+    else {
+      this.getGithubContainers().then((response) => {
+        this.loading = false;
+        console.log(response);
+        this.containers = response;
+      });
+    }
   },
 
 });
