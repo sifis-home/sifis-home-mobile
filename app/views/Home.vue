@@ -24,8 +24,10 @@
       <Button class="list-button" text="Settings" @tap="settings" />
 
       <Button class="list-button" text="Marketplace" @tap="marketplace" />
+<!--
       <Button class="list-button" text="Voice commands" @tap="settings" />
       <Button class="list-button" text="View logs" @tap="settings" />
+-->
       <Button class="list-button" text="Log out" @tap="logout" />
 
     </StackLayout>
