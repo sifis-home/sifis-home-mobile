@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { getString, setString } from '@nativescript/core/application-settings';
 import { Http, HttpResponse } from '@nativescript/core';
+import * as Https from 'nativescript-https';
+import { knownFolders } from '@nativescript/core';
 
 const tokenName = 'sifis-token';
 const yggioUrl = 'https://yggio.sifis-home.eu/';
@@ -104,27 +106,50 @@ export default {
 
     getDhtAll() {
       console.log('getDhtAll: ');
+
+      let dir = knownFolders.currentApp().getFolder('assets')
+      let certificate = dir.getFile('ca-sifis.crt').path
+      console.log(certificate);
+      //Https.enableSSLPinning({ host: 'sifis-device1.iit.cnr.it', certificate })
+      Https.enableSSLPinning({ host: 'sifis-device1.iit.cnr.it:8000', certificate, allowInvalidCertificates: true, validatesDomainName: false })
+            Https.request({
+        url: 'https://sifis-device1.iit.cnr.it:8000/dht/get_all',
+        method: 'GET',
+    })
+        .then(function (response) {
+            console.log('Https.request response', response);
+        })
+        .catch(function (error) {
+            console.error('Https.request error', error);
+        });
+
       /*
       Http.request({
-        url: 'http://sifis-device2.iit.cnr.it:8000/dht/get_all',
+        url: 'https://sifis-device1.iit.cnr.it:8000/dht/get_all',
         method: 'GET',
         headers: { Authorization: 'Bearer ' + this.yggio_token },
       }).then(
         (response) => {
-          console.log('Http GET Result: ' + response);
+          console.log('Http GET Result: ');
+          console.log(`Response Status Code: ${response.statusCode}`)
+          console.log(`Response Headers:`, response.headers)
+          console.log(`Response Content: ${response.content}`)
+          //  return response.data;
         },
         (e) => {
           console.log(e);
         }
       );
       */
+      /*
       return axios
-        .get('http://sifis-device2.iit.cnr.it:8000/dht/get_all')
+        .get('https://sifis-device1.iit.cnr.it:8000/dht/get_all')
         .then((response) => {
           console.log(response.data);
           return response.data;
         })
         .catch((error) => this.onError(error));
+        */
     },
 
     getGithubToken() {
