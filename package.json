@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@nativescript-community/https": "^4.1.0",
     "@nativescript/core": "~8.4.0",
     "@nativescript/secure-storage": "^3.0.0",
     "@nativescript/theme": "^3.0.2",
@@ -11,7 +12,6 @@
     "axios": "^0.21.1",
     "browserify-zlib": "^0.2.0",
     "buffer": "^6.0.3",
-    "nativescript-https": "^2.2.2",
     "nativescript-theme-core": "^2.0.24",
     "nativescript-ui-listview": "^10.0.2",
     "nativescript-vue": "~2.9.0",

@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { getString, setString } from '@nativescript/core/application-settings';
 import { Http, HttpResponse } from '@nativescript/core';
-import * as Https from 'nativescript-https';
+import * as Https from '@nativescript-community/https';
+
 import { knownFolders } from '@nativescript/core';
 
 const tokenName = 'sifis-token';
