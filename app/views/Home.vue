@@ -56,7 +56,7 @@ export default Vue.extend({
     };
   },
   created() {
-    this.checkIsLoggedIn();
+    this.initYggioToken();
     this.getUserData().then((userData) => {
       if (!userData || !userData._id) {
         this.$navigateTo(LoginView);
