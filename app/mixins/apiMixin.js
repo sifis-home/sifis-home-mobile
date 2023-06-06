@@ -18,7 +18,9 @@ export default {
   },
 
   methods: {
-    checkIsLoggedIn() {
+
+    // Initialize Yggio token from local storage
+    initYggioToken() {
       this.yggio_token = getString(tokenName);
       if (this.yggio_token) {
         axios.defaults.headers.common['Authorization'] =
@@ -26,7 +28,8 @@ export default {
       }
     },
 
-    apiLogin(username, password) {
+    // perform login to yggio.sifis-home.eu
+    yggioLogin(username, password) {
       return axios
         .post(yggioUrl + 'api/auth/local', {
           username: username,
@@ -40,10 +43,11 @@ export default {
             'Bearer ' + returned_token;
           return returned_token;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("yggioLogin", error));
     },
 
-    apiLogout() {
+    // perform logout from yggio.sifis-home.eu
+    yggioLogout() {
       axios.defaults.headers.common['Authorization'] = '';
       this.yggio_token = '';
       setString(tokenName, '');
@@ -55,7 +59,7 @@ export default {
         .then((response) => {
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserData", error));
     },
 
     getUserRoles() {
@@ -65,7 +69,7 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserRoles", error));
     },
 
     getOrganization() {
@@ -76,7 +80,7 @@ export default {
           //console.log(response);
           return response.data[0];
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getOrganization", error));
     },
 
     getUserByUsername(username) {
@@ -86,7 +90,7 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserByUsername", error));
     },
 
     getUsers(user_list) {
@@ -102,7 +106,7 @@ export default {
         .then((response) => {
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUsers", error));
     },
 
     getDhtAll() {
@@ -124,9 +128,8 @@ export default {
             console.error('Https.request error', error);
         });
 
-      /*
       Http.request({
-        url: 'https://sifis-device1.iit.cnr.it:8000/dht/get_all',
+        url: 'https://146.48.62.97:8000/dht/get_all',
         method: 'GET',
         headers: { Authorization: 'Bearer ' + this.yggio_token },
       }).then(
@@ -141,16 +144,13 @@ export default {
           console.log(e);
         }
       );
-      */
-      /*
       return axios
-        .get('https://sifis-device1.iit.cnr.it:8000/dht/get_all')
+        .get('https://146.48.62.97:8000/dht/get_all')
         .then((response) => {
           console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
-        */
+        .catch((error) => this.onError("getDhtAll", error));
     },
 
     getGithubToken() {
@@ -172,11 +172,12 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getGithubContainers", error));
     },
 
-    onError(error) {
-      console.log('Catch Error: ' + error);
+    onError(function_name, error) {
+      console.log("Caught error from " + function_name + "-" + error);
+      return null;
       // NOP
     },
   },
