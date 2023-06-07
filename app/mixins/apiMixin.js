@@ -9,7 +9,8 @@ export default {
   data() {
     return {
       yggio_token: '',
-      github_token: '',
+      github_token: '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',
+      centria_token: 'dde35016eaf4a0704b95fde066d07e88593c72135c8c3c577b6751563a8ab798',
       /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
     };
   },
@@ -149,6 +150,36 @@ export default {
         .catch((error) => this.onError(error));
     },
 
+    getDeviceInfo() {
+      return axios
+        .get('https://mobileapi.seculab.fi/v1/device/info')
+        .then((response) => {
+          console.log('Device Info');
+          console.log(response.data);
+          return response.data;
+        })
+        .catch((error) => this.onError(error));
+    },
+
+        
+    getDeviceStatus() {
+      return axios
+        .get(
+          'https://mobileapi.seculab.fi/v1/device/status',
+          {
+            headers: {
+              'x-api-key': this.centria_token,
+            },
+          }
+        )
+        .then((response) => {
+          console.log('Device Status');
+          console.log(response.data);
+          return response.data;
+        })
+        .catch((error) => this.onError(error));
+    },
+     
     onError(error) {
       console.log('Catch Error: ' + error);
       // NOP

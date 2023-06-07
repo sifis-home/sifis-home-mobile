@@ -20,9 +20,14 @@
           for="device in devices"
           class="list-group h-full"
         >
+
           <v-template>
             <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
-              <Span :text="device.name" />
+              <Span :text="device.topic_name" />
+              <br>
+              <Span :text="device.topic_uuid" />
+              <Span for="name, item in value">
+
             </Button>
           </v-template>
 
