@@ -14,10 +14,9 @@
       />
 
       <Label :text="container.name" class="text-center font-bold text-lg" />
-      <Label :text="container.repository.full_name" class="text-center  text-md" />
+      <Label :text="container.repository.full_name" class="text-center text-md" />
 
-      <TextView :text="container.repository.description" editable=false />
-      <TextView :text="container.repository.html_url + '\nCreated: ' + container.created_at + '\nLast updated: ' + container.updated_at" editable=false />      
+      <TextView :text="container.repository.description + '\n\n' + container.repository.html_url + '\n\nCreated: ' + container.created_at + '\nLast updated: ' + container.updated_at" editable=false fontSize="12" />
 
       <Button v-show="!installed && !installing" class="list-button" text="Install this application" @tap="install" />
 

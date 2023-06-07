@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@nativescript-community/https": "^4.1.0",
     "@nativescript/core": "~8.4.0",
     "@nativescript/secure-storage": "^3.0.0",
     "@nativescript/theme": "^3.0.2",
@@ -18,8 +19,10 @@
     "os-browserify": "^0.3.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
+    "tns-core-modules": "^6.5.27",
     "tty-browserify": "^0.0.1",
     "url": "^0.11.0",
+    "url-polyfill": "^1.1.12",
     "webpack-chain": "^6.0.0"
   },
   "devDependencies": {
@@ -33,6 +36,7 @@
     "nativescript-dev-": "github:nativescript/android",
     "nativescript-vue-template-compiler": "~2.9.0",
     "tailwindcss": "^3.1.8",
+    "tns-platform-declarations": "^6.5.15",
     "typescript": "~4.8.0",
     "vue": "~2.6.12"
   }

@@ -2,12 +2,10 @@
   <Page>
 
     <ActionBar>
-      <Label text="Device view" class="font-bold text-lg" />
+      <Label text="Marketplace" class="font-bold text-lg" />
     </ActionBar>
 
     <StackLayout>
-
-      <Label text="Marketplace: list of repositories" class="text-center font-bold text-lg content" />
 
       <Image
         class="logo"

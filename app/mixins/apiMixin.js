@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { getString, setString } from '@nativescript/core/application-settings';
 import { Http, HttpResponse } from '@nativescript/core';
+import * as Https from '@nativescript-community/https';
+
+import { knownFolders } from '@nativescript/core';
 
 const tokenName = 'sifis-token';
 const yggioUrl = 'https://yggio.sifis-home.eu/';
@@ -9,14 +12,16 @@ export default {
   data() {
     return {
       yggio_token: '',
-      github_token: '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',
-      centria_token: 'dde35016eaf4a0704b95fde066d07e88593c72135c8c3c577b6751563a8ab798',
+      github_token: '',
+      centria_token: '',
       /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
     };
   },
 
   methods: {
-    checkIsLoggedIn() {
+
+    // Initialize Yggio token from local storage
+    initYggioToken() {
       this.yggio_token = getString(tokenName);
       if (this.yggio_token) {
         axios.defaults.headers.common['Authorization'] =
@@ -24,7 +29,8 @@ export default {
       }
     },
 
-    apiLogin(username, password) {
+    // perform login to yggio.sifis-home.eu
+    yggioLogin(username, password) {
       return axios
         .post(yggioUrl + 'api/auth/local', {
           username: username,
@@ -38,10 +44,11 @@ export default {
             'Bearer ' + returned_token;
           return returned_token;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("yggioLogin", error));
     },
 
-    apiLogout() {
+    // perform logout from yggio.sifis-home.eu
+    yggioLogout() {
       axios.defaults.headers.common['Authorization'] = '';
       this.yggio_token = '';
       setString(tokenName, '');
@@ -53,7 +60,7 @@ export default {
         .then((response) => {
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserData", error));
     },
 
     getUserRoles() {
@@ -63,7 +70,7 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserRoles", error));
     },
 
     getOrganization() {
@@ -74,7 +81,7 @@ export default {
           //console.log(response);
           return response.data[0];
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getOrganization", error));
     },
 
     getUserByUsername(username) {
@@ -84,7 +91,7 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUserByUsername", error));
     },
 
     getUsers(user_list) {
@@ -100,32 +107,51 @@ export default {
         .then((response) => {
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getUsers", error));
     },
 
     getDhtAll() {
       console.log('getDhtAll: ');
-      /*
+
+      let dir = knownFolders.currentApp().getFolder('assets')
+      let certificate = dir.getFile('ca-sifis.crt').path
+      console.log(certificate);
+      //Https.enableSSLPinning({ host: 'sifis-device1.iit.cnr.it', certificate })
+      Https.enableSSLPinning({ host: 'sifis-device1.iit.cnr.it:8000', certificate, allowInvalidCertificates: true, validatesDomainName: false })
+            Https.request({
+        url: 'https://sifis-device1.iit.cnr.it:8000/dht/get_all',
+        method: 'GET',
+    })
+        .then(function (response) {
+            console.log('Https.request response', response);
+        })
+        .catch(function (error) {
+            console.error('Https.request error', error);
+        });
+
       Http.request({
-        url: 'http://sifis-device2.iit.cnr.it:8000/dht/get_all',
+        url: 'https://146.48.62.97:8000/dht/get_all',
         method: 'GET',
         headers: { Authorization: 'Bearer ' + this.yggio_token },
       }).then(
         (response) => {
-          console.log('Http GET Result: ' + response);
+          console.log('Http GET Result: ');
+          console.log(`Response Status Code: ${response.statusCode}`)
+          console.log(`Response Headers:`, response.headers)
+          console.log(`Response Content: ${response.content}`)
+          //  return response.data;
         },
         (e) => {
           console.log(e);
         }
       );
-      */
       return axios
-        .get('http://sifis-device2.iit.cnr.it:8000/dht/get_all')
+        .get('https://146.48.62.97:8000/dht/get_all')
         .then((response) => {
           console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getDhtAll", error));
     },
 
     getGithubToken() {
@@ -147,7 +173,7 @@ export default {
           //console.log(response.data);
           return response.data;
         })
-        .catch((error) => this.onError(error));
+        .catch((error) => this.onError("getGithubContainers", error));
     },
 
     getDeviceInfo() {

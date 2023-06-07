@@ -16,7 +16,7 @@
       <Button text="Add new" @tap="userAdd" />
 
       <StackLayout class="input-field">
-        <ListView for="(user, index) in users" separatorColor="transparent" @itemTap="loadDevice" class="list-group h-full">
+        <ListView for="(user, index) in users" separatorColor="transparent" class="list-group h-full">
           <v-template>
             <StackLayout class="m-0 p-0">
               <GridLayout class="listview--item" rows="auto" columns="auto, *">

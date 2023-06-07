@@ -66,7 +66,7 @@ export default {
           // sifis-home-user-1 + sfshm1!
         });
       } else {
-        this.apiLogin(this.username, this.password).then((response) => {
+        this.yggioLogin(this.username, this.password).then((response) => {
           if (response !== undefined) {
             this.$navigateTo(Home);
           } else {
