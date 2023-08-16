@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true"/>
+    <domain-config cleartextTrafficPermitted="false">
+        <domain>sifis-device1.iit.cnr.it</domain>
+        <trust-anchors>
+            <certificates src="@raw/casifis"/>
+        </trust-anchors>
+
+    </domain-config>
+</network-security-config>
+
+
+
+
