@@ -27,7 +27,7 @@
         <TextField
           class="list-button"
           hint="Password"
-          v-model="password1"
+          v-model="password"
           secure="true"
           returnKeyType="next"
         ></TextField>
@@ -38,7 +38,7 @@
         <TextField
           class="list-button"
           hint="Confirm password"
-          v-model="password2"
+          v-model="password_confirm"
           secure="true"
           returnKeyType="next"
         ></TextField>
@@ -51,22 +51,33 @@
 
 <script>
 import Vue from 'nativescript-vue';
+import apiMixin from '@/mixins/apiMixin';
 
 export default Vue.extend({
+  mixins: [apiMixin],
+
+  props: {
+    organization: String,
+  },
   data() {
     return {
       username: '',
-      password1: '',
-      password2: '',
+      password: '',
+      password_confirm: '',
     };
   },
   methods: {
     save() {
-      if(this.password1 != this.password2) {
+      if (this.password != this.password_confirm) {
         alert('Passwords do not match!');
-      }
-      else {
-        alert('User added!');
+      } else {
+        this.yggioCreateUser(
+          this.organization,
+          this.username,
+          this.password
+        ).then((response) => {
+          alert('User added!');
+        });
       }
     },
   },

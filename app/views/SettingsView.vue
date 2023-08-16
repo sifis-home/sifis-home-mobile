@@ -1,10 +1,10 @@
 <template>
   <Page>
-    <ActionBar>
-      <Label text="Settings" class="font-bold text-lg" />
-    </ActionBar>
+    <ActionBar title="Settings" />
 
     <StackLayout>
+      <HeaderView />
+
       <Image
         class="logo"
         src="~/include/sifis-home-logo.png"
@@ -12,34 +12,33 @@
         verticalAlignment="center"
       />
 
-      <Label text="Server IP Address" class="text-label" />
+      <Label text="Local DHT Server Address" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="list-button"
-          hint="IP address"
-          v-model="ipAddress"
+          hint="Local DHT Server address"
+          v-model="localServerAddress"
           returnKeyType="next"
         ></TextField>
       </StackLayout>
 
-      <Label text="DHT shared key" class="text-label" />
+      <Label text="Remote DHT Server Address" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="list-button"
-          hint="32 bytes in hex format"
-          v-model="sharedKey"
+          hint="Remote DHT Server address"
+          v-model="remoteServerAddress"
           returnKeyType="next"
         ></TextField>
       </StackLayout>
 
-      <Label text="User name" class="text-label" />
+      <Label text="Type of DHT Server Connection" class="text-label" />
       <StackLayout class="input-field">
-        <TextField
+        <ListPicker
           class="list-button"
-          hint="User name"
-          v-model="userName"
-          returnKeyType="next"
-        ></TextField>
+          :items="listOfItems"
+          v-model="serverType"
+        />
       </StackLayout>
 
       <Button class="list-button" text="Save" @tap="save" />
@@ -49,20 +48,48 @@
 
 <script>
 import Vue from 'nativescript-vue';
+import apiMixin from '@/mixins/apiMixin';
+import HeaderView from './HeaderView.vue';
+import Home from './Home.vue';
 
 export default Vue.extend({
+  components: {
+    HeaderView,
+  },
   data() {
     return {
-      ipAddress: '127.0.0.1',
-      sharedKey: '360ba80f4f84eb2079416775644402d0',
-      userName: 'John Doe',
+      localServerAddress: 'https://127.0.0.1',
+      remoteServerAddress: 'https://sifis-proxy.riots.fi/dht-proxy.php',
+      serverType: 0,
+      listOfItems: ['Local', 'Remote'],
     };
   },
+  mixins: [apiMixin],
   methods: {
     save() {
-      console.log('You have tapped the message!');
-      alert('Settings saved!');
+      this.setDHTAddress(
+        this.localServerAddress,
+        this.remoteServerAddress,
+        this.serverType
+      );
+      this.$navigateTo(Home);
+
+      alert('Settings saved').then(function () {
+        console.log('Navigate to Home');
+      });
     },
+  },
+  mounted() {
+    let configs = this.getDHTConfig();
+    if (configs[0]) {
+      this.localServerAddress = configs[0];
+    }
+    if (configs[1]) {
+      this.remoteServerAddress = configs[1];
+    }
+    if (configs[2]) {
+      this.serverType = configs[2];
+    }
   },
 });
 </script>

@@ -1,11 +1,10 @@
 <template>
   <Page>
 
-    <ActionBar>
-      <Label text="Marketplace" class="font-bold text-lg" />
-    </ActionBar>
+    <ActionBar title="Marketplace" />
 
     <StackLayout>
+      <HeaderView />
 
       <Image
         class="logo"
@@ -48,9 +47,12 @@
 import Vue from 'nativescript-vue';
 import apiMixin from '@/mixins/apiMixin';
 import ApplicationView from './ApplicationView.vue';
+import HeaderView from './HeaderView.vue';
 
 export default Vue.extend({  
-
+  components: {
+    HeaderView,
+  },
   props: {
     id: Number,
     name: String
@@ -67,6 +69,7 @@ export default Vue.extend({
 
   methods: {
     showContainer(container) {
+      console.log("SHow container");
       this.$navigateTo(ApplicationView, {
         props: {
           container: container
@@ -80,7 +83,7 @@ export default Vue.extend({
       this.containers = [];
     }
     else {
-      this.getGithubContainers().then((response) => {
+      this.getGithubContainers("third-party-application").then((response) => {
         this.loading = false;
         this.containers = response;
         this.repository_count = this.containers.length;

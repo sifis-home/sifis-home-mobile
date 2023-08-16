@@ -1,11 +1,10 @@
 <template>
   <Page>
 
-    <ActionBar>
-      <Label text="User List" class="font-bold text-lg" />
-    </ActionBar>
+   <ActionBar title="User list" />
 
     <StackLayout>
+      <HeaderView />
 
       <Image
         class="logo"
@@ -16,21 +15,18 @@
       <Button text="Add new" @tap="userAdd" />
 
       <StackLayout class="input-field">
-        <ListView for="(user, index) in users" separatorColor="transparent" class="list-group h-full">
+        <ListView for="(user, index) in users" class="list-group">
           <v-template>
             <StackLayout class="m-0 p-0">
               <GridLayout class="listview--item" rows="auto" columns="auto, *">
               <!-- <Label row="0" col="0" :text="index" class="h2 m-l-4" />-->
-                <Label row="0" col="2" :text="index+1 + ': ' + user.username" class="h2 m-l-4 text-black" @tap="getUserData(user._id)" /> <!-- colSpan="2"  -->
+                <Label row="0" col="2" :text="index+1 + ': ' + user.username" class="h2 m-l-4 text-black" @tap="getUserData(user.username)" /> <!-- colSpan="2"  -->
 
               </GridLayout>
             </StackLayout>
           </v-template>
         </ListView>
       </StackLayout>
-
-
-
     </StackLayout>
   </Page>
 </template>
@@ -42,10 +38,13 @@
 import Vue from 'nativescript-vue';
 import apiMixin from '@/mixins/apiMixin';
 import UserAddView from './UserAddView.vue';
+import HeaderView from './HeaderView.vue';
 
 export default Vue.extend({
   mixins: [apiMixin],
-
+  components: {
+    HeaderView,
+  },
   props: {
     users: Array,
     organization: String,
@@ -53,15 +52,30 @@ export default Vue.extend({
   },
 
   methods: {
-    getUserData(user__id) {
-      //this.getUserRoles(this.organization, user__id, this.token).then((resp) => {
-      //  console.log(resp);
-      //});
-      alert(user__id);
+    getUserData(username) {
+      /*
+      this.getUserByUsername(username).then((resp) => {
+        console.log(resp);
+      });
+
+     this.getUserRoles(this.organization, user__id, this.token).then((resp) => {
+        console.log(resp);
+      });*/
+
+      alert(username);
     },
     userAdd() {
       console.log("User add");
-      this.$navigateTo(UserAddView);
+      this.$navigateTo(UserAddView, {
+        transition: {
+          name: 'fade',
+          duration: 225,
+          curve: 'easeIn',
+        },
+        props: {
+          organization: this.organization,
+        },
+      });
     },
 
   },

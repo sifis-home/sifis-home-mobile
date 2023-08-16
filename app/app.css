@@ -4,15 +4,28 @@
 
 Page {
   background-color: #fafafc;
+  color: black;
 }
 
 .content {
   margin: 15px;
+  color: black;
+}
+
+.alert {
+  background-color: #ff7f50;
+  color: black;
+}
+
+.list-group {
+  background-color: #fafafc;
+  color: black;
 }
 
 .text-label {
   margin: 15px;
   margin-bottom: 0;
+  color: black;
 }
 
 .fas {
@@ -62,11 +75,16 @@ ActionBar {
 
 .list-button {
   background-color: #fff;
-  margin: 15px;
+  margin: 10px;
   padding: 10px;
   min-height: 80px;
   border-color: #000000;
+  color: #000000;
   border-width: 1;
+}
+
+.button-danger {
+  border-color: #ff0000;
 }
 
 .bordered {

@@ -12,7 +12,10 @@
         src="~/include/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
+        style="margin-top: 30px"
       />
+
+      <Label text="Username" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="input m-0"
@@ -23,6 +26,8 @@
           returnKeyType="next"
         ></TextField>
       </StackLayout>
+
+      <Label text="Password" class="text-label" />
       <StackLayout class="input-field">
         <TextField
           class="input m-0"
