@@ -32,9 +32,10 @@ Page {
   font-family: 'Font Awesome 5 Free', 'fa-solid-900';
   font-weight: 900;
 }
-.ico {
-  font-family: FontAwesome;
-  font-size: 48;
+
+.far {
+  font-family: 'Font Awesome 5 Free', 'fa-regular-400';
+  font-weight: 400;
 }
 
 ActionBar {
@@ -75,21 +76,60 @@ ActionBar {
 
 .list-button {
   background-color: #fff;
+  margin: 15px 30px 10px;
+  min-height: 100px;
+  /*border-color: rgba($color: #000000, $alpha: 0.1);*/
+  border-width: 1px;
+  color: #000000;
+}
+
+.small-button {
+  background-color: #fff;
   margin: 10px;
   padding: 10px;
-  min-height: 80px;
+  min-height: 40px;
   border-color: #000000;
   color: #000000;
   border-width: 1;
+  width: 50%;
+}
+
+.button-icon {
+  font-size: 30px;
+  background-color: transparent;
+  border-color: transparent;
+  border-width: 1;
+  z-index: 0;
 }
 
 .button-danger {
-  border-color: #ff0000;
+  color: #ff0000;
+}
+
+.button-toggle {
+  margin: 10px;
+  font-size: 50px;
 }
 
 .bordered {
   border-color: #000000;
   border-width: 1;
+}
+
+.yellow {
+  color: yellow;
+}
+.red {
+  color: red;
+}
+.green {
+  color: green;
+}
+.black {
+  color: black;
+}
+.grey {
+  color: grey;
 }
 
 .logo {
@@ -106,4 +146,40 @@ ActionBar {
   margin: 0;
   padding: 0;
   color: #000000;
+}
+
+.value-card {
+  margin-bottom: 16;
+  padding: 16;
+  background-color: #fff;
+  border-color: rgba($color: #000000, $alpha: 0.1);
+  border-width: 1;
+  box-shadow: 1 1 rgba($color: #000000, $alpha: 0.1);
+  height: auto;
+}
+
+.ns-dark.value-card {
+  margin-bottom: 16;
+  padding: 16;
+  background-color: #2d2f32;
+  border-color: rgba($color: #3e3b3b, $alpha: 0.1);
+  border-width: 1;
+  box-shadow: 1 1 rgba($color: #424040, $alpha: 0.1);
+  height: auto;
+}
+
+.value-card--paddingless {
+  margin-bottom: 16;
+  background-color: #fff;
+  border-color: rgba($color: #000000, $alpha: 0.1);
+  border-width: 1;
+  height: auto;
+}
+
+.ns-dark.value-card--paddingless {
+  margin-bottom: 16;
+  background-color: #2d2f32;
+  border-color: rgba($color: #3e3b3b, $alpha: 0.1);
+  border-width: 1;
+  box-shadow: 1 1 rgba($color: #424040, $alpha: 0.1);
 }
