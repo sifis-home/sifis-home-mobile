@@ -8,6 +8,7 @@ For demonstrating this use case, we should be able to delete the shelly_1pm topi
 <template>
   <Page>
     <ActionBar title="Device List" />
+    <ScrollView orientation="vertical">
 
     <StackLayout>
       <HeaderView />
@@ -22,27 +23,40 @@ For demonstrating this use case, we should be able to delete the shelly_1pm topi
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading />
 
       <TextView v-show="error" :text="error" class="text-center" editable=false fontSize="16" style="color: red; margin-top:20px" />
-      <Button class="list-button text-center" text="Add new" @tap="addDevice" />
 
-      <GridLayout rows="*" columns="*">
-        <RadListView
-          style="margin-top: 50px;"
-          for="device in devices"
-          class="list-group">
+<!--      <Button class="small-button text-center" text="Add new" @tap="addDevice" />-->
 
-          <v-template>
+      <Button class="button-icon fas" width="10%" text.decode="&#x2b;" @tap="addDevice" />
 
-            <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
-            <Span :text="device.topic_name + '\n' + device.topic_uuid" class="text-sm"/>
+      <template v-for="device in devices">
+        <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
+          <Span :text="getIcon(device)" :class="getClass(device)" />
+          <Span :text="getText(device)" fontAttributes="Bold" class="text-center" />
+        </Button>
 
-          </Button>
-        </v-template>
+      </template>
 
-        </RadListView>
-      </GridLayout>
+<!--
 
+        <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
+
+          <FormattedString>
+              <Span class="fas" text.decode="&#xf0eb;" style="color: red; float: left" />
+              <Span class="fas" style="text-align: right; float:right; color: red;" width="20%" text.decode="&#xf06a;" />
+              <Span :text="getText(device)" fontAttributes="Bold" class="text-center" />
+          </FormattedString>
+        </Button>
+
+ -->
+
+<!--            <Button class="list-button text-center" textWrap="true" @tap="$event => loadDevice(device)">
+
+              <Span :text="getText(device)" class="text-sm"/>
+            </Button>-->
 
     </StackLayout>
+    </ScrollView>
+    
   </Page>
 </template>
 
@@ -63,27 +77,84 @@ export default Vue.extend({
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       devices: [],
       error: '',
     };
   },
   created() {
+    this.checkDevices();
+    this.timer = setInterval(this.checkDevices, 1000);
+  },
+  beforeDestroy() {
+    clearInterval(this.timer);
+  },
 
-    //this.getDhtSensors().then((response) => {
-    this.getDhtAll().then((response) => {
-      console.log("Then");
-      console.log("*" + response + "*");
-      if(!response) {
-        this.error = 'Error connecting to:\n' + this.getDHTAddress();
+  methods: {
+    checkDevices()  {
+      this.getDhtDevices().then((response) => {
+        if(!response) {
+          this.error = 'Error connecting to:\n' + this.getDHTAddress();
+        }
+        else {
+          this.error = '';
+          this.devices = response;
+          this.loading = false;
+        }
+      });
+    },
+    
+    getClass(device) {
+      if(device.topic_name.indexOf('shelly') == 0) {
+          if(device.value.output1) return "black fas";
+          return "grey fas";
+        }
+      else if(device.topic_name == 'domo_window_sensor' || device.topic_name == 'domo_door_sensor') {
+        if(device.value.status) return "grey far";
+        return "black fas";
+      }
+      else if (device.topic_name == 'domo_pir_sensor') {
+        if (device.value.status) return "black fas";
+        return "grey far";
+      }
+      else if(device.topic_name == 'domo_light') {
+        if(device.value.status) return "black fas";
+        return "grey far";
+      }
+    },
+
+    getIcon(device) {
+      if(device.topic_name.indexOf('shelly') == 0) {
+        if(device.value.output1) return String.fromCharCode(0xf205);  // toggle-on
+        return String.fromCharCode(0xf204); // toggle-off
+      }
+      else if(device.topic_name == 'domo_window_sensor' || device.topic_name == 'domo_door_sensor') {
+        if(device.value.status) return String.fromCharCode(0xf058); // circle-check
+        return String.fromCharCode(0xf06a); // circle exlamation
+      }
+      else if (device.topic_name == 'domo_pir_sensor') {
+        if (device.value.status) return String.fromCharCode(0xf06a); // circle exlamation
+        return String.fromCharCode(0xf058); // circle-check
+      }
+      else if(device.topic_name == 'domo_light') {
+        return String.fromCharCode(0xf0eb); // light bulb
+      }
+      return String.fromCharCode(0xf059); // circle-question
+    },
+    getText(device) {
+      let text = " ";
+      if(device.value.name) {
+        text += device.value.name;
+        if(device.value.area_name) {
+          text += " / " + device.value.area_name;
+        }
       }
       else {
-        this.devices = response;
-        this.loading = false;
+        text += device.topic_name;
       }
-    });
-  },
-  methods: {
+      return text;
+    },
+
     loadDevice(device) {
       this.$navigateTo(DeviceView, {
         props: {
@@ -113,6 +184,7 @@ export default Vue.extend({
       });
     },    
 },
+
 });
 </script>
 

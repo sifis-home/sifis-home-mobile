@@ -11,6 +11,8 @@ UC 04 – Get notification about software intrusion
       v-show="alertText != ''"
       :text="alertText"
       class="text-center alert"
+      textWrap="true"
+      style="padding: 30px"
     ></Label>
   </StackLayout>
 </template>
@@ -32,76 +34,121 @@ export default {
   },
   methods: {
     checkAlerts() {
-      this.getDhtAll().then(function () {
-        response.data.forEach((dht_topic) => {
-          // UC 03 - Being alerted if motion sensors detect people presence
-          if (dht_topic.topic_name == 'domo_window_sensor') {
-            if (dht_topic.value.status == 0) {
-              this.alertText =
-                'Domo Window Sensor ' + dht_topic.value.area_name + ' active';
-              this.active_alert |= 0x1;
-            } else {
-              this.active_alert &= ~0x1;
+      this.getDhtAll().then((response) => {
+        global.myDht = response;
+        let new_text = '';
+        if (!response) {
+          this.alertText = 'Error connecting to: ' + this.getDHTAddress();
+          this.active_alert |= 0x10000;
+        } else {
+          this.active_alert = 0;
+          this.alertText = '';
+          response.forEach((dht_topic) => {
+            // UC 03 - Being alerted if motion sensors detect people presence
+            if (dht_topic.topic_name == 'domo_window_sensor') {
+              if (dht_topic.value.status == 0) {
+                if (this.alertText != '') {
+                  this.alertText += '\n';
+                }
+                this.alertText +=
+                  dht_topic.value.name +
+                  ' / ' +
+                  dht_topic.value.area_name +
+                  ' active';
+                this.active_alert |= 0x1;
+              } else {
+                this.active_alert &= ~0x1;
+              }
             }
-          }
 
-          // UC 03 - Being alerted if motion sensors detect people presence
-          if (dht_topic.topic_name == 'domo_pir_sensor') {
-            if (dht_topic.value.status == 1) {
-              this.alertText =
-                'Domo PIR server ' + dht_topic.value.area_name + ' active';
-              this.active_alert |= 0x10;
-            } else {
-              this.active_alert &= ~0x10;
+            // UC 03 - Being alerted if motion sensors detect people presence
+            if (dht_topic.topic_name == 'domo_pir_sensor') {
+              if (dht_topic.value.status == 1) {
+                if (this.alertText != '') {
+                  this.alertText += '\n';
+                }
+                this.alertText +=
+                  dht_topic.value.name +
+                  ' / ' +
+                  dht_topic.value.area_name +
+                  ' active';
+                this.active_alert |= 0x10;
+              } else {
+                this.active_alert &= ~0x10;
+              }
             }
-          }
 
-          // UC 03 - Being alerted if motion sensors detect people presence
-          if (dht_topic.topic_name == 'domo_door_sensor') {
-            if (dht_topic.value.status == 0) {
-              this.alertText =
-                'Domo Door Sensor ' + dht_topic.value.area_name + ' active';
-              this.active_alert |= 0x100;
-            } else {
-              this.active_alert &= ~0x100;
+            // UC 03 - Being alerted if motion sensors detect people presence
+            if (dht_topic.topic_name == 'domo_door_sensor') {
+              if (dht_topic.value.status == 0) {
+                if (this.alertText != '') {
+                  this.alertText += '\n';
+                }
+                this.alertText +=
+                  dht_topic.value.name +
+                  ' / ' +
+                  dht_topic.value.area_name +
+                  ' active';
+                this.active_alert |= 0x100;
+              } else {
+                this.active_alert &= ~0x100;
+              }
             }
-          }
 
-          // UC 04 – Get notification about software intrusion
-          if (dht_topic.topic_name == 'software_intrusion') {
-            if (dht_topic.value.status == 1) {
-              this.alertText = 'Software intrusion detected';
-              this.active_alert |= 0x1000;
-            } else {
-              this.active_alert &= ~0x1000;
+            // UC 04 – Get notification about software intrusion
+            if (dht_topic.topic_name == 'software_intrusion') {
+              if (dht_topic.value.status == 1) {
+                if (this.alertText != '') {
+                  this.alertText += '\n';
+                }
+                this.alertText += 'Software intrusion detected';
+                this.active_alert |= 0x1000;
+              } else {
+                this.active_alert &= ~0x1000;
+              }
             }
-          }
 
-          // UC 19 – Being alerted if a device is generating anomalous traffic
-          if (dht_topic.topic_name == 'anomalous_traffic') {
-            if (dht_topic.value.status == 1) {
-              this.alertText = 'Device is generating anomalous traffic';
-              this.active_alert |= 0x10000;
-            } else {
-              this.active_alert &= ~0x10000;
+            // UC 19 – Being alerted if a device is generating anomalous traffic
+            if (dht_topic.topic_name == 'anomalous_traffic') {
+              if (this.alertText != '') {
+                this.alertText += '\n';
+              }
+              if (dht_topic.value.status == 1) {
+                this.alertText += 'Device is generating anomalous traffic';
+                this.active_alert |= 0x10000;
+              } else {
+                this.active_alert &= ~0x10000;
+              }
             }
-          }
-        });
+          });
+        }
       });
 
-      if (this.active_alert > 0 && this.active_alert != this.previous_alert) {
-        this.previous_alert = this.active_alert;
-        alert(this.alertText).then(function () {
-          // NOP
-        });
-      } else if (this.active_alert == 0) {
-        this.previous_alert = this.active_alert;
+      if (this.active_alert > 0) {
+        this.setAlert(this.active_alert);
+        this.setAlertText(this.alertText);
+        if (this.active_alert != this.previous_alert) {
+          this.previous_alert = this.active_alert;
+          this.setAlert(this.active_alert);
+          this.setAlertText(this.alertText);
+          /*alert(this.alertText).then(function () {
+            // NOP
+          });*/
+        }
+      } else {
+        this.previous_alert = 0;
         this.alertText = '';
+        this.setAlert(this.active_alert);
+        this.setAlertText(this.alertText);
       }
     },
   },
   created() {
-    this.timer = setInterval(this.checkAlerts, 5000);
+    this.active_alert = this.getAlert();
+    this.alertText = this.getAlertText();
+    this.previous_alert = this.active_alert;
+    this.checkAlerts();
+    this.timer = setInterval(this.checkAlerts, 1000);
   },
   beforeDestroy() {
     clearInterval(this.timer);
