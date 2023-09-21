@@ -1,6 +1,13 @@
 <template>
   <Page>
-    <ActionBar title="Settings" />
+    <ActionBar>
+      <NavigationButton
+        text="Back"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Settings" />
+    </ActionBar>
 
     <ScrollView orientation="vertical">
       <StackLayout>
@@ -8,7 +15,7 @@
 
         <Image
           class="logo"
-          src="~/include/sifis-home-logo.png"
+          src="~/sifis-home-logo.png"
           height="120"
           verticalAlignment="center"
         />

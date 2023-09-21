@@ -7,7 +7,7 @@
 
       <Image
         class="logo"
-        src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
       />

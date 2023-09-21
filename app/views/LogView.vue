@@ -4,7 +4,15 @@ UC 11 – Control statistics and analytics
 
 <template>
   <Page>
-    <ActionBar title="Statistics & Analytics" />
+
+    <ActionBar>
+      <NavigationButton
+        text="Home"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Statistics & Analytics" />
+    </ActionBar>
 
     <ScrollView orientation="vertical">
     <StackLayout>
@@ -12,15 +20,38 @@ UC 11 – Control statistics and analytics
 
       <Image
         class="logo"
-        src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
       />
 
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading />
 
-      <TextView v-show="error" :text="error" class="text-center" editable=false fontSize="16" style="color: red; margin-top:20px" />
+      <TextView v-if="error" :text="error" class="text-center log-item" editable=false fontSize="16" style="color: red; margin-top:20px" />
+      <Label v-else class="log-item" text=" " />
 
+        <StackLayout>
+            <template v-for="log in logs">
+              <StackLayout orientation="vertical" class="log-item">
+
+                <StackLayout orientation="horizontal" style = "margin-left: 30px; margin-right: 30px; margin-top: 30px;">
+
+                  <Button class="button-icon fas" style="text-align: left; color: red;" v-if="log.priority == 'severe'" width="30%" text.decode="&#xf06a;" />
+                  <Button class="button-icon fas" style="text-align: left; color: red;" v-else-if="log.priority == 'high'" width="30%" text.decode="&#xf06a;" />
+                  <Button class="button-icon fas" style="text-align: left; color: orange;" v-else-if="log.priority == 'medium'" width="30%" text.decode="&#xf06a;" />
+                  <Button class="button-icon fas" style="text-align: left; color: grey;" v-else-if="log.priority == 'low'" width="30%" text.decode="&#xf06a;" />
+
+                  <Label class="text-xs" style="text-align: right;" :text="log.category + ' /'" width="20%"/>
+                  <Label class="text-xs" style="text-align: left;" :text="' ' + log.type" width="20%"/>
+                  <Label class="text-xs" style="text-align: right;" :text="formatDate(log.createdAt)" width="30%"/>
+                </StackLayout>
+
+                <Label style="margin-left: 30px; margin-right: 10px; margin-bottom: 30px; line-height: 1;" textWrap="true" class="text-sm" :text="log.message"  />
+              </StackLayout>
+            </template>
+        </StackLayout>
+
+<!--
       <ListView for="log in logs">
         <v-template>
           <StackLayout orientation="vertical">
@@ -42,6 +73,7 @@ UC 11 – Control statistics and analytics
         </v-template>
 
       </ListView>
+-->
 
     </StackLayout>
     </ScrollView>
@@ -69,20 +101,31 @@ export default Vue.extend({
       error: '',
     };
   },
-  created() {
 
-    this.getLogs().then((response) => {
-      if(!response) {
-        this.error = 'Error fetching logs';
-      }
-      else {
-        this.logs = response;
-        this.loading = false;
-      }
-    });
+
+  created() {
+    this.loading = true;
+    this.checkLogs();
+    this.timer = setInterval(this.checkLogs, 2000);
   },
+  beforeDestroy() {
+    clearInterval(this.timer);
+  },
+
   methods: {
 
+    checkLogs() {
+      this.getLogs().then((response) => {
+        if(!response) {
+          this.error = 'Error fetching logs';
+        }
+        else {
+          this.error = '';
+          this.logs = response;
+          this.loading = false;
+        }
+      });
+    },
 
     formatDate(timestamp) {
       const date = new Date(timestamp);
@@ -132,4 +175,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+.log-item{
+    padding: 5 18;
+    border-color: #332;
+    border-width: 0 0 1 0;
+}
+
 </style>

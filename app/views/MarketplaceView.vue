@@ -1,7 +1,14 @@
 <template>
   <Page>
 
-    <ActionBar title="Marketplace" />
+    <ActionBar>
+      <NavigationButton
+        text="Home"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Marketplace" />
+    </ActionBar>
 
     <ScrollView orientation="vertical">
 
@@ -10,7 +17,7 @@
 
         <Image
           class="logo"
-          src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
           height="120"
           verticalAlignment="center"
         />
@@ -26,7 +33,7 @@
             </template>
         </StackLayout>
   
-        <Label :text="'Available applications (' + repository_count + ')'" style="margin-top: 20px;" class="text-center font-bold text-sm" />
+        <Label v-show="repository_count>0" :text="'Available applications (' + repository_count + ')'" style="margin-top: 20px;" class="text-center font-bold text-sm" />
         <StackLayout>
             <template v-for="container in containers">
                 <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(container.name)">
@@ -95,17 +102,16 @@ export default Vue.extend({
       response[0].value.containers.forEach((container) => {
         let container_name = container;
         if(container_name.startsWith('ghcr.io/sifis-home/')) {          
-          container_name = container_name.substring(
-              container_name.indexOf("ghcr.io/sifis-home/") + 19, 
-              container_name.lastIndexOf(":")
-          );
-        }           
+          container_name = container_name.substring(19);
+        }
+        if(container_name.endsWith(':latest')) {          
+          container_name = container_name.substring(0, container_name.lastIndexOf(":"));
+        }
         if (!this.installed_apps.includes(container_name)) {
           this.installed_apps.push(container_name)
         }
       });
       this.installed_count = this.installed_apps.length;
-
     });
 
     if(this.getGithubToken() == "") {
@@ -114,7 +120,12 @@ export default Vue.extend({
     else {
       this.getGithubContainers("third-party-application").then((response) => {
         this.loading = false;
-        this.containers = response;
+        response.forEach((container) => {
+          if (!this.installed_apps.includes(container.name)) {
+            this.containers.push(container)
+          }
+        });
+        //this.containers = response;
         this.repository_count = this.containers.length;
       });
     }

@@ -7,7 +7,16 @@ For demonstrating this use case, we should be able to delete the shelly_1pm topi
 
 <template>
   <Page>
-    <ActionBar title="Device List" />
+
+    <ActionBar>
+      <NavigationButton
+        text="Home"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Device List" />
+    </ActionBar>
+
     <ScrollView orientation="vertical">
 
     <StackLayout>
@@ -15,7 +24,7 @@ For demonstrating this use case, we should be able to delete the shelly_1pm topi
 
       <Image
         class="logo"
-        src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
       />
@@ -121,12 +130,23 @@ export default Vue.extend({
         if(device.value.status) return "black fas";
         return "grey far";
       }
+      else if (device.topic_name == 'SIFIS::RiotsThermostat') {
+        if (device.value.status) return "black fas";
+        return "grey fas";
+      }
+      return "black fas";
     },
 
     getIcon(device) {
       if(device.topic_name.indexOf('shelly') == 0) {
         if(device.value.output1) return String.fromCharCode(0xf205);  // toggle-on
         return String.fromCharCode(0xf204); // toggle-off
+      }
+      else if (device.topic_name == 'SIFIS::RiotsThermostat') {
+        if (device.value.status) {
+          return String.fromCharCode(0xf2c7);  // temperature-full
+        }
+        return String.fromCharCode(0xf2cb); // temperature-empty
       }
       else if(device.topic_name == 'domo_window_sensor' || device.topic_name == 'domo_door_sensor') {
         if(device.value.status) return String.fromCharCode(0xf058); // circle-check

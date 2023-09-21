@@ -19,6 +19,8 @@ const remoteDhtToken = 'remote-dht-address';
 const dhtSelectionToken = 'dht-selection';
 const alertStatus = 'alert-status';
 const alertText = 'alert-text';
+const alertJson = 'alert-json';
+const alertTime = 'alert-time';
 
 const dhtPortToken = 'dht-port';
 const policyPortToken = 'policy-port';
@@ -118,8 +120,6 @@ export default {
       return axios
         .get(yggioUrl + 'api/organizations')
         .then((response) => {
-          console.log('Get organizations');
-          //console.log(response.data[0]);
           return response.data[0];
         })
         .catch((error) => this.onError('getOrganization', error));
@@ -214,11 +214,27 @@ export default {
       return getNumber(alertStatus, 0);
     },
 
+    setAlertTime(time) {
+      setNumber(alertTime, time);
+    },
+    getAlertTime() {
+      return getNumber(alertTime, 0);
+    },
+
     setAlertText(alert_text) {
       setString(alertText, alert_text);
+      //setString(alertText, JSON.stringify(alert_text));
     },
     getAlertText() {
       return getString(alertText, '');
+      //return JSON.parse(getString(alertText, "{}"));
+    },
+
+    setAlertJSON(alert_text) {
+      setString(alertJson, JSON.stringify(alert_text));
+    },
+    getAlertJSON() {
+      return JSON.parse(getString(alertJson, '{}'));
     },
 
     getDHTConfig() {
@@ -268,6 +284,7 @@ export default {
               the_sensor.topic_name == 'domo_pir_sensor' ||
               the_sensor.topic_name == 'domo_light' ||
               the_sensor.topic_name == 'domo_switch' ||
+              the_sensor.topic_name == 'SIFIS::RiotsThermostat' ||
               the_sensor.topic_name.startsWith('shelly')
             ) {
               sensors.push(the_sensor);

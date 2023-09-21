@@ -1,6 +1,13 @@
 <template>
   <Page>
-    <ActionBar title="Application view" />
+    <ActionBar>
+      <NavigationButton
+        text="Back"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Application view" />
+    </ActionBar>
 
     <ScrollView orientation="vertical">
       <StackLayout>
@@ -8,7 +15,7 @@
 
         <Image
           class="logo"
-          src="~/include/sifis-home-logo.png"
+          src="~/sifis-home-logo.png"
           height="120"
           verticalAlignment="center"
         />
@@ -260,6 +267,7 @@ export default Vue.extend({
     this.getDhtTopic('SIFIS:container_list').then((response) => {
       response[0].value.containers.forEach((container) => {
         if (
+          container == 'ghcr.io/sifis-home/' + this.container_name ||
           container ==
             'ghcr.io/sifis-home/' + this.container_name + ':latest' ||
           container == this.container_name

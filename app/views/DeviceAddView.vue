@@ -27,7 +27,7 @@ I think that for demonstrating this use case, it can be sufficient to have the p
       <StackLayout>
         <Image
           class="logo"
-          src="~/include/sifis-home-logo.png"
+          src="~/sifis-home-logo.png"
           height="120"
           verticalAlignment="center"
         />

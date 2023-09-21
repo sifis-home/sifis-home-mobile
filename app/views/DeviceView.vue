@@ -1,13 +1,23 @@
 <template>
   <Page>
-    <ActionBar title="Device view" />
 
-    <StackLayout>
+    <ActionBar>
+      <NavigationButton
+        text="Back"
+        android.systemIcon="ic_menu_back"
+        @tap="$navigateBack"
+      />
+      <Label text="Device view" />
+    </ActionBar>
+
+    <DockLayout stretchLastChild="false">
+
+    <StackLayout dock="top">
       <HeaderView />
 
       <Image
         class="logo"
-        src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
       />
@@ -28,6 +38,13 @@
         <Label class="text-center font-bold text-sm" :text="'Input1: ' + topic_value.input1" />
       </template>
 
+      <template v-else-if="is_riots">
+        <Label class="text-center font-bold text-sm" :text="'Temperature: ' + topic_value.temperature + ' °C'"  />
+        <Label class="text-center font-bold text-sm" :text="'Humidity: ' + topic_value.humidity + ' %RH'" />
+        <Label class="text-center font-bold text-sm" :text="'Set temperature: ' + topic_value.set_temperature + ' °C'" />
+        <Label class="text-center font-bold text-sm" :text="topic_value.status==1 ? 'Heating status: Heating' : 'Heating status: Off' " />
+
+      </template>
 
       <template v-else>
         <template v-if="is_light">'
@@ -42,16 +59,19 @@
       <ActivityIndicator v-show="loading" style="margin-top: 50px;" :busy=loading />
 
 
-      <StackLayout orientation="horizontal" style = "margin-top: 50px;">
-        <Label text="" width="40%" />
-        <Button v-show="is_shelly" class="button-icon fas" width="10%" text.decode="&#xf044;" @tap="modify" />
-        <Button class="button-danger button-icon fas" :width="is_shelly? '10%' : '20%'" text.decode="&#xf2ed;" @tap="deleteDevice" />
-        <Label text="" width="40%"/>
-      </StackLayout>
-
 
 
     </StackLayout>
+
+    <StackLayout orientation="horizontal" dock="bottom" style = "margin-top: 50px;">
+      <Label text="" width="40%" />
+      <Button v-show="is_shelly" class="button-icon fas" width="10%" text.decode="&#xf044;" @tap="modify" />
+      <Button class="button-danger button-icon fas" :width="is_shelly? '10%' : '20%'" text.decode="&#xf2ed;" @tap="deleteDevice" />
+      <Label text="" width="40%"/>
+    </StackLayout>
+
+    </DockLayout>
+
   </Page>
 </template>
 
@@ -82,11 +102,11 @@ export default Vue.extend({
       loading: false,
       is_shelly: false,
       is_sensor: false,
+      is_riots: false,
       is_light: false,
     };
   }, 
   created() {
-    console.log("Device view created");
     this.loading = true;
     this.checkSensor();
     this.timer = setInterval(this.checkSensor, 1000);
@@ -116,6 +136,10 @@ export default Vue.extend({
         if (this.topic_value.status) return "black fas";
         return "grey far";
       }
+      else if (this.topic_name == 'SIFIS::RiotsThermostat') {
+        if (this.topic_value.status) return "red fas";
+        return "grey fas";
+      }
       else if(this.topic_name == 'domo_light') {
         if(this.topic_value.status) return "black fas";
         return "grey far";
@@ -138,6 +162,11 @@ export default Vue.extend({
       else if(this.topic_name == 'domo_light') {
         return String.fromCharCode(0xf0eb); // light bulb
       }
+      else if (this.topic_name == 'SIFIS::RiotsThermostat') {
+        if (this.topic_value.status) return String.fromCharCode(0xf2c7); // temperature-full
+        return String.fromCharCode(0xf2cb); // temperature-empty
+      }
+
       return String.fromCharCode(0xf059); // circle-question
     },
 
@@ -153,6 +182,9 @@ export default Vue.extend({
           if(this.topic_name.indexOf('shelly') == 0) {
             this.is_shelly = true;
           }
+          if( this.topic_name == 'SIFIS::RiotsThermostat') {
+            this.is_riots = true;
+          }          
           if( this.topic_name == 'domo_window_sensor' ||
               this.topic_name == 'domo_door_sensor' ||
               this.topic_name == 'domo_pir_sensor') {
@@ -225,7 +257,7 @@ export default Vue.extend({
           }
         };
         this.pubDhtSensor(command).then((response) => {
-          console.log("Command Sent, response: *" + JSON.stringify(response) + "*");
+          //console.log("Command Sent, response: *" + JSON.stringify(response) + "*");
         });
       }
       else if(this.is_light) {
@@ -249,7 +281,7 @@ export default Vue.extend({
           console.log("Command Sent, response: *" + JSON.stringify(response) + "*");
         });
       }
-      this.timer = setInterval(this.checkSensor, 1000);
+      this.timer = setInterval(this.checkSensor, 2000);
     }
   },
 });

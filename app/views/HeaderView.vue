@@ -34,12 +34,18 @@ export default {
   },
   methods: {
     checkAlerts() {
+      let alertTime = this.getAlertTime();
+      if (alertTime == 0) {
+        alertTime = Date.now();
+        this.setAlertTime(alertTime);
+      }
+
       this.getDhtAll().then((response) => {
-        global.myDht = response;
+        let notification_message = false;
         let new_text = '';
         if (!response) {
-          this.alertText = 'Error connecting to: ' + this.getDHTAddress();
-          this.active_alert |= 0x10000;
+          //this.alertText = 'Error connecting to: ' + this.getDHTAddress();
+          //this.active_alert |= 0x10000;
         } else {
           this.active_alert = 0;
           this.alertText = '';
@@ -47,15 +53,17 @@ export default {
             // UC 03 - Being alerted if motion sensors detect people presence
             if (dht_topic.topic_name == 'domo_window_sensor') {
               if (dht_topic.value.status == 0) {
-                if (this.alertText != '') {
-                  this.alertText += '\n';
-                }
-                this.alertText +=
-                  dht_topic.value.name +
-                  ' / ' +
-                  dht_topic.value.area_name +
-                  ' active';
                 this.active_alert |= 0x1;
+                if (this.active_alert != this.previous_alert) {
+                  if (this.alertText != '') {
+                    this.alertText += '\n';
+                  }
+                  this.alertText +=
+                    dht_topic.value.name +
+                    ' / ' +
+                    dht_topic.value.area_name +
+                    ' active';
+                }
               } else {
                 this.active_alert &= ~0x1;
               }
@@ -64,15 +72,17 @@ export default {
             // UC 03 - Being alerted if motion sensors detect people presence
             if (dht_topic.topic_name == 'domo_pir_sensor') {
               if (dht_topic.value.status == 1) {
-                if (this.alertText != '') {
-                  this.alertText += '\n';
-                }
-                this.alertText +=
-                  dht_topic.value.name +
-                  ' / ' +
-                  dht_topic.value.area_name +
-                  ' active';
                 this.active_alert |= 0x10;
+                if (this.active_alert != this.previous_alert) {
+                  if (this.alertText != '') {
+                    this.alertText += '\n';
+                  }
+                  this.alertText +=
+                    dht_topic.value.name +
+                    ' / ' +
+                    dht_topic.value.area_name +
+                    ' active';
+                }
               } else {
                 this.active_alert &= ~0x10;
               }
@@ -81,56 +91,62 @@ export default {
             // UC 03 - Being alerted if motion sensors detect people presence
             if (dht_topic.topic_name == 'domo_door_sensor') {
               if (dht_topic.value.status == 0) {
-                if (this.alertText != '') {
-                  this.alertText += '\n';
-                }
-                this.alertText +=
-                  dht_topic.value.name +
-                  ' / ' +
-                  dht_topic.value.area_name +
-                  ' active';
                 this.active_alert |= 0x100;
+                if (this.active_alert != this.previous_alert) {
+                  if (this.alertText != '') {
+                    this.alertText += '\n';
+                  }
+                  this.alertText +=
+                    dht_topic.value.name +
+                    ' / ' +
+                    dht_topic.value.area_name +
+                    ' active';
+                }
               } else {
                 this.active_alert &= ~0x100;
               }
             }
 
             // UC 04 – Get notification about software intrusion
-            if (dht_topic.topic_name == 'software_intrusion') {
-              if (dht_topic.value.status == 1) {
-                if (this.alertText != '') {
-                  this.alertText += '\n';
-                }
-                this.alertText += 'Software intrusion detected';
+            // UC 19 – Being alerted if a device is generating anomalous traffic
+            if (dht_topic.topic_name == 'SIFIS:notification_message') {
+              notification_message = true;
+              if (dht_topic.value.message != '') {
                 this.active_alert |= 0x1000;
+                if (this.active_alert != this.previous_alert) {
+                  if (this.alertText != '') {
+                    this.alertText += '\n';
+                  }
+                  this.alertText += dht_topic.value.message;
+                }
               } else {
                 this.active_alert &= ~0x1000;
               }
             }
-
-            // UC 19 – Being alerted if a device is generating anomalous traffic
-            if (dht_topic.topic_name == 'anomalous_traffic') {
-              if (this.alertText != '') {
-                this.alertText += '\n';
-              }
-              if (dht_topic.value.status == 1) {
-                this.alertText += 'Device is generating anomalous traffic';
-                this.active_alert |= 0x10000;
-              } else {
-                this.active_alert &= ~0x10000;
-              }
-            }
           });
+
+          if (!notification_message) {
+            this.active_alert &= ~0x1000;
+          }
         }
       });
 
       if (this.active_alert > 0) {
+        let alertTime = this.getAlertTime();
+        if (alertTime == 0) {
+          alertTime = Date.now();
+          this.setAlertTime(alertTime);
+        }
+        if (Date.now() - alertTime > 15000) {
+          // 15 seconds passed
+          this.alertText = '';
+        }
+
         this.setAlert(this.active_alert);
         this.setAlertText(this.alertText);
         if (this.active_alert != this.previous_alert) {
+          this.setAlertTime(Date.now());
           this.previous_alert = this.active_alert;
-          this.setAlert(this.active_alert);
-          this.setAlertText(this.alertText);
           /*alert(this.alertText).then(function () {
             // NOP
           });*/
@@ -140,6 +156,7 @@ export default {
         this.alertText = '';
         this.setAlert(this.active_alert);
         this.setAlertText(this.alertText);
+        this.setAlertTime(Date.now());
       }
     },
   },
@@ -148,7 +165,8 @@ export default {
     this.alertText = this.getAlertText();
     this.previous_alert = this.active_alert;
     this.checkAlerts();
-    this.timer = setInterval(this.checkAlerts, 1000);
+    this.timer = setInterval(this.checkAlerts, 2000);
+    //this.checktimer = setInterval(this.alertTimer, 15000);
   },
   beforeDestroy() {
     clearInterval(this.timer);

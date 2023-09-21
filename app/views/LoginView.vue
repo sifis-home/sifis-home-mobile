@@ -9,7 +9,7 @@
       <Image
         class="m-b-16"
         v-if="!title"
-        src="~/include/sifis-home-logo.png"
+        src="~/sifis-home-logo.png"
         height="120"
         verticalAlignment="center"
         style="margin-top: 30px"
