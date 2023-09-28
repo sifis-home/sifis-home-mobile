@@ -27,7 +27,7 @@ const policyPortToken = 'policy-port';
 const privacyPortToken = 'privacy-port';
 
 /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
-const githubToken = '';
+const githubToken = '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';
 
 const centriaToken =
   '6c32fb013d1cd883aa01b2acb42f51501e74ac5e59ba14f21d8cd00915f2ee81';
@@ -407,7 +407,7 @@ export default {
       console.log('getGithubLabels: ' + container);
       return axios
         .get(
-          'https://ghcr.io/token?scope=repository:sifis-home/' +
+          'https://ghcr.io/token?scope=repository:ghcr.io/sifis-home/' +
             container +
             ':pull'
         )
@@ -415,7 +415,7 @@ export default {
           let gh_token = response.data.token;
           return axios
             .get(
-              'https://ghcr.io/v2/sifis-home/' +
+              'https://ghcr.io/v2/ghcr.io/sifis-home/' +
                 container +
                 '/manifests/latest',
               {
@@ -428,7 +428,7 @@ export default {
               let gh_digest = response.data.config.digest;
               return axios
                 .get(
-                  'https://ghcr.io/v2/sifis-home/' +
+                  'https://ghcr.io/v2/ghcr.io/sifis-home/' +
                     container +
                     '/blobs/' +
                     gh_digest,
