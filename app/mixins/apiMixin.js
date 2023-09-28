@@ -403,6 +403,11 @@ export default {
         .catch((error) => this.onError('getGithubContainers', error));
     },
 
+    getContainerNameWithoutPrefixAndSuffix(name) {
+      // Remove the prefix "3pa-" and suffix "-amd64" or "-arm64"
+      return name.replace(/^3pa-/, '').replace(/-(amd64|arm64)$/, '');
+    },
+
     getGithubLabels(container) {
       console.log('getGithubLabels: ' + container);
       return axios

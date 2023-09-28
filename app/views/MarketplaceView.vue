@@ -28,7 +28,7 @@
         <StackLayout>
             <template v-for="app in installed_apps">
                 <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(app)">
-                  <Span :text="app" class="text-sm"/>
+                  <Span :text="getContainerNameWithoutPrefixAndSuffix(app)" class="text-sm"/>
                 </Button>
             </template>
         </StackLayout>
@@ -37,7 +37,7 @@
         <StackLayout>
             <template v-for="container in containers">
                 <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(container.name)">
-                  <Span :text="container.name" class="text-sm"/>
+                  <Span :text="getContainerNameWithoutPrefixAndSuffix(container.name)" class="text-sm"/>
                     <!--<Span class="text-xs" :text="'Last updated: ' + container.updated_at"/>-->
                 </Button>
             </template>

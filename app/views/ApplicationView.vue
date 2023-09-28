@@ -21,7 +21,10 @@
         />
 
         <StackLayout class="m-16">
-          <Label :text="container_name" class="font-bold text-lg" />
+          <Label
+            :text="getContainerNameWithoutPrefixAndSuffix(container_name)"
+            class="font-bold text-lg"
+          />
           <Label :text="description" class="text-sm" />
           <Label :text="api_labels.api_description" class="text-sm" />
 
