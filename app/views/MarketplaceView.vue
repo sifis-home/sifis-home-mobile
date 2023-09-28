@@ -36,8 +36,8 @@
         <Label v-show="repository_count>0" :text="'Available applications (' + repository_count + ')'" style="margin-top: 20px;" class="text-center font-bold text-sm" />
         <StackLayout>
             <template v-for="container in containers">
-                <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(container.name)">
-                  <Span :text="getContainerNameWithoutPrefixAndSuffix(container.name)" class="text-sm"/>
+                <Button class="list-button text-center" textWrap="true" @tap="$event => showContainer(container)">
+                  <Span :text="getContainerNameWithoutPrefixAndSuffix(container)" class="text-sm"/>
                     <!--<Span class="text-xs" :text="'Last updated: ' + container.updated_at"/>-->
                 </Button>
             </template>
@@ -118,11 +118,10 @@ export default Vue.extend({
 
     getAvailableApplicationsForArch(response, arch) {
         response.forEach((container) => {
-          if (!this.installed_apps.includes(container.name) && container.name.endsWith('-' + arch)) {
+          if (!this.installed_apps.includes(container) && container.endsWith('-' + arch)) {
             this.containers.push(container)
           }
         });
-        //this.containers = response;
         this.repository_count = this.containers.length;
     }
   },
@@ -131,16 +130,10 @@ export default Vue.extend({
     this.getDhtTopic("SIFIS:container_list").then((response) => {
         this.getContainersWithArch(response, 'arm64')
     });
-
-    if(this.getGithubToken() == "") {
-      this.containers = [];
-    }
-    else {
-      this.getGithubContainers("third-party-application").then((response) => {
-        this.loading = false;
-        this.getAvailableApplicationsForArch(response, 'arm64')
-      });
-    }
+    this.getGitHub3paList().then((response) => {
+      this.loading = false;
+      this.getAvailableApplicationsForArch(response, 'arm64')
+    });
   },
 
 });

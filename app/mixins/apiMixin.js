@@ -27,7 +27,7 @@ const policyPortToken = 'policy-port';
 const privacyPortToken = 'privacy-port';
 
 /* To access sifis-home containers, application needs token with read:packages scope https://github.com/settings/tokens/new */
-const githubToken = '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';
+const githubToken = '';
 
 const centriaToken =
   '6c32fb013d1cd883aa01b2acb42f51501e74ac5e59ba14f21d8cd00915f2ee81';
@@ -401,6 +401,17 @@ export default {
           return repositories;
         })
         .catch((error) => this.onError('getGithubContainers', error));
+    },
+
+    getGitHub3paList() {
+      return axios
+        .get('http://146.48.62.71:3030')
+        .then((response) => {
+          // Access the "packages" array and save it in a new variable
+          var packagesArray = response.data.packages;
+          return packagesArray;
+        })
+        .catch((error) => this.onError('getGitHub3paList', error));
     },
 
     getContainerNameWithoutPrefixAndSuffix(name) {
