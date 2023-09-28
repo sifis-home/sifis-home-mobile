@@ -58,7 +58,7 @@ import apiMixin from '@/mixins/apiMixin';
 import ApplicationView from './ApplicationView.vue';
 import HeaderView from './HeaderView.vue';
 
-export default Vue.extend({  
+export default Vue.extend({
   components: {
     HeaderView,
   },
@@ -83,35 +83,53 @@ export default Vue.extend({
       let container_name = container;
       if(container_name.startsWith('ghcr.io/sifis-home/')) {
         container_name = container_name.substring(
-            container_name.indexOf("ghcr.io/sifis-home/") + 19, 
+            container_name.indexOf("ghcr.io/sifis-home/") + 19,
             container_name.lastIndexOf(":")
         );
       }
-      console.log("Shwo container: " + container_name);
+      console.log("Show container: " + container_name);
 
       this.$navigateTo(ApplicationView, {
         props: {
           container_name: container_name
         }
       });
-    }
-  },
+    },
 
-  created() {
-    this.getDhtTopic("SIFIS:container_list").then((response) => {
-      response[0].value.containers.forEach((container) => {
-        let container_name = container;
-        if(container_name.startsWith('ghcr.io/sifis-home/')) {          
+    getContainersWithArch(response, arch) {
+       response[0].value.containers.forEach((container) => {
+     let container_name = container;
+        if(container_name.startsWith('ghcr.io/sifis-home/')) {
           container_name = container_name.substring(19);
         }
-        if(container_name.endsWith(':latest')) {          
+        if(container_name.endsWith(':latest')) {
           container_name = container_name.substring(0, container_name.lastIndexOf(":"));
+        }
+        if(!container_name.endsWith('-' + arch)) {
+          //continue;
+          return;
         }
         if (!this.installed_apps.includes(container_name)) {
           this.installed_apps.push(container_name)
         }
       });
       this.installed_count = this.installed_apps.length;
+    },
+
+    getAvailableApplicationsForArch(response, arch) {
+        response.forEach((container) => {
+          if (!this.installed_apps.includes(container.name) && container.name.endsWith('-' + arch)) {
+            this.containers.push(container)
+          }
+        });
+        //this.containers = response;
+        this.repository_count = this.containers.length;
+    }
+  },
+
+  created() {
+    this.getDhtTopic("SIFIS:container_list").then((response) => {
+        this.getContainersWithArch(response, 'arm64')
     });
 
     if(this.getGithubToken() == "") {
@@ -120,13 +138,7 @@ export default Vue.extend({
     else {
       this.getGithubContainers("third-party-application").then((response) => {
         this.loading = false;
-        response.forEach((container) => {
-          if (!this.installed_apps.includes(container.name)) {
-            this.containers.push(container)
-          }
-        });
-        //this.containers = response;
-        this.repository_count = this.containers.length;
+        this.getAvailableApplicationsForArch(response, 'arm64')
       });
     }
   },
