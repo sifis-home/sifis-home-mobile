@@ -26,7 +26,6 @@
             class="font-bold text-lg"
           />
           <Label :text="description" class="text-sm" />
-          <Label :text="api_labels.api_description" class="text-sm" />
 
           <Label
             :text="behavior_label.device_type"
@@ -40,42 +39,45 @@
           />
 
           <Label
-            v-if="safety_risk.name"
-            :text="'Safety risk: ' + safety_risk.risk_score"
+            v-if="safety_risk[0]"
+            :text="'Safety risks'"
             style="margin-top: 20px"
             class="font-bold text-sm"
           />
           <Label
-            v-if="safety_risk.name"
-            :text="safety_risk.name + ': ' + safety_risk.description"
+            v-for="(risk, index) in safety_risk"
+            :key="index"
+            :text="`${risk}: ${safety_risk_description[index]}`"
             textWrap="true"
             lineHeight="2"
             class="text-xs"
           />
 
           <Label
-            v-if="privacy_risk.name"
-            :text="'Privacy risk'"
+            v-if="privacy_risk[0]"
+            :text="'Privacy risks'"
             style="margin-top: 20px"
             class="font-bold text-sm"
           />
           <Label
-            v-if="privacy_risk.name"
-            :text="privacy_risk.name + ': ' + privacy_risk.description"
+            v-for="(risk, index) in privacy_risk"
+            :key="index"
+            :text="`${risk}: ${privacy_risk_description[index]}`"
             textWrap="true"
             lineHeight="2"
             class="text-xs"
           />
 
           <Label
-            v-if="financial_risk.name"
-            :text="'Financial risk: ' + financial_risk.risk_score"
+            v-if="financial_risk[0]"
+            :text="'Financial risks'"
             style="margin-top: 20px"
             class="font-bold text-sm"
           />
           <Label
-            v-if="financial_risk.name"
-            :text="financial_risk.name + ': ' + financial_risk.description"
+            v-for="(risk, index) in financial_risk"
+            :key="index"
+            :text="`${risk}: ${financial_risk_description[index]}`"
             textWrap="true"
             lineHeight="2"
             class="text-xs"
@@ -99,7 +101,7 @@
           <StackLayout
             v-show="quality > 0"
             orientation="horizontal"
-            style="margin-left: 40px; margin-right: 40px; margin-top: 30px"
+            style="margin-left: 5px; margin-right: 5px; margin-top: 30px"
           >
             <Button
               class="fas button-icon"
@@ -117,7 +119,7 @@
             />
             <Button
               class="fas button-icon"
-              style="text-align: center; color: grey"
+              style="text-align: center; color: green"
               v-else-if="quality >= 80"
               width="20%"
               text.decode="&#xf06a;"
@@ -144,7 +146,7 @@
             />
             <Button
               class="fas button-icon"
-              style="text-align: center; color: grey"
+              style="text-align: center; color: green"
               v-else-if="quality >= 80"
               width="20%"
               text.decode="&#xf06a;"
@@ -211,9 +213,12 @@ export default Vue.extend({
       manifest: {},
       api_labels: '',
       behavior_label: '',
-      safety_risk: '',
-      privacy_risk: '',
-      financial_risk: '',
+      safety_risk: [],
+      safety_risk_description: [],
+      privacy_risk: [],
+      privacy_risk_description: [],
+      financial_risk: [],
+      financial_risk_description: [],
       quality: 0,
     };
   },
@@ -268,12 +273,13 @@ export default Vue.extend({
   created() {
     this.loading = true;
     this.getDhtTopic('SIFIS:container_list').then((response) => {
+      console.log('getDhtTopic response: ' + response);
       response[0].value.containers.forEach((container) => {
         if (
-          container == 'ghcr.io/sifis-home/' + this.container_name ||
-          container ==
+          container === 'ghcr.io/sifis-home/' + this.container_name ||
+          container ===
             'ghcr.io/sifis-home/' + this.container_name + ':latest' ||
-          container == this.container_name
+          container === this.container_name
         ) {
           this.installed = true;
         }
@@ -281,16 +287,57 @@ export default Vue.extend({
     });
 
     this.getGithubLabels(this.container_name).then((response) => {
+      //console.log('getGithubLabels response: ' + response);
       this.loading = false;
-      this.manifest = JSON.parse(response['manifest']);
-      this.api_labels = this.manifest.api_labels[0];
-      this.behavior_label = this.api_labels.behavior_label;
-      let security_label = this.api_labels.security_label;
-      this.safety_risk = security_label.safety[0];
-      this.privacy_risk = security_label.privacy[0];
-      this.financial_risk = security_label.financial[0];
+
+      // Get the app description
       this.description = response['org.opencontainers.image.description'];
+
+      // Get the software quality result
       this.quality = response['software.quality'];
+
+      // Get the manifest
+      this.manifest = JSON.parse(response['manifest']);
+      //console.log('manifest: ' + JSON.stringify(this.manifest, null, 2));
+
+      // Get the number of API labels composing the manifest
+      let number_of_api_labels = 0;
+      try {
+        number_of_api_labels = Object.keys(this.manifest.api_labels).length;
+        console.log('Number of API labels: ' + number_of_api_labels);
+      } catch (error) {
+        console.log('No API label is present in the manifest ' + error);
+        return;
+      }
+
+      // Extract the risks from each API label
+      // We are going to show only the risk name and description of each risk
+      // found in the API labels. Only unique risks will be shown, i.e.,
+      // if a risk is present in two API labels, we list the risk only once.
+      for (let i = 0; i < number_of_api_labels; i++) {
+        let security_label = this.manifest.api_labels[i].security_label;
+
+        security_label.safety.forEach((risk) => {
+          if (!this.safety_risk.includes(risk.name)) {
+            this.safety_risk.push(risk.name);
+            this.safety_risk_description.push(risk.description);
+          }
+        });
+
+        security_label.privacy.forEach((risk) => {
+          if (!this.privacy_risk.includes(risk.name)) {
+            this.privacy_risk.push(risk.name);
+            this.privacy_risk_description.push(risk.description);
+          }
+        });
+
+        security_label.financial.forEach((risk) => {
+          if (!this.financial_risk.includes(risk.name)) {
+            this.financial_risk.push(risk.name);
+            this.financial_risk_description.push(risk.description);
+          }
+        });
+      }
     });
   },
 });
