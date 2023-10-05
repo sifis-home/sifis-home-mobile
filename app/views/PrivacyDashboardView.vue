@@ -9,23 +9,40 @@
       <Label text="Privacy Dashboard" />
     </ActionBar>
 
-    <WebView :src="webUrl" />
+    <WebView @loaded="webviewLoaded" />
   </Page>
 </template>
 
-<script>
+<script lang="ts">
+
+import {
+  LoadEventData,
+} from '@nativescript-community/ui-webview';
+
+import { WebViewUtils } from 'nativescript-webview-utils';
+
 import apiMixin from '@/mixins/apiMixin';
 
 export default {
   mixins: [apiMixin],
 
-  data() {
+  /*data() {
     return {
       webUrl: '',
     };
   },
   created() {
     this.webUrl = this.getPrivacyAddress();
+  },*/
+  methods: {
+    webviewLoaded(args: LoadEventData) {
+        const webview = args.object;
+        webview.src = this.getPrivacyAddress();
+
+        const headers: Map<string, string> = new Map();
+        headers.set("Authorization", "Bearer " + this.getYggioToken());
+        WebViewUtils.addHeaders(webview, headers);
+    },
   },
 };
 </script>

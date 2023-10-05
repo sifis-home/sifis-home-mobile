@@ -95,6 +95,11 @@ export default {
       setString(yggioToken, '');
     },
 
+    // Get Yggio token
+    getYggioToken() {
+        return getString(yggioToken);
+    },
+
     getUserData() {
       return axios
         .get(yggioUrl + 'api/users/me')
@@ -188,7 +193,7 @@ export default {
       return getNumber(policyPortToken, 9000);
     },
     getPrivacyPort() {
-      return getNumber(privacyPortToken, 11000);
+      return getNumber(privacyPortToken, 11001);
     },
 
     setDHTAddress(
