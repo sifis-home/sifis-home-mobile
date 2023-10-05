@@ -35,6 +35,7 @@
           hint="Password"
           secure="true"
           v-model="password"
+          type="password"
         ></TextField>
       </StackLayout>
 
