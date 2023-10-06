@@ -247,9 +247,9 @@ export default {
       dhtConfig.push(getString(localDhtToken, 'https://127.0.0.1'));
       dhtConfig.push(getString(remoteDhtToken, 'https://yggio.sifis-home.eu'));
       dhtConfig.push(getNumber(dhtSelectionToken, 1));
-      dhtConfig.push(getNumber(dhtPortToken, 3000));
-      dhtConfig.push(getNumber(policyPortToken, 9000));
-      dhtConfig.push(getNumber(privacyPortToken, 11001));
+      dhtConfig.push(this.getDHTPort());
+      dhtConfig.push(this.getPolicyPort());
+      dhtConfig.push(this.getPrivacyPort());
       return dhtConfig;
     },
 
