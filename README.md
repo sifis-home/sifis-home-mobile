@@ -4,7 +4,7 @@ Mobile application for SIFIS-Home
 
 This application has been created with [Vue.js and NativeScript](https://nativescript-vue.org/), and it can be run on NativeScript preview application in StackBlitz
 
-[Go on StackBlitz and try this branch](https://stackblitz.com/github/sifis-home/sifis-home-mobile/tree/misc2)
+[Go on StackBlitz](https://stackblitz.com/github/sifis-home/sifis-home-mobile/)
 
 ## License
 
