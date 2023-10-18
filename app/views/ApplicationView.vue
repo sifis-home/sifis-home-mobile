@@ -89,15 +89,6 @@
               :busy="loading"
           />
 
-          <!--
-      <Label v-show="!loading && quality" :text="'Software quality: ' + (quality) + '%'" class="text-center text-sm" style="margin-top: 20px;"/>
-      <Span class="fas" text.decode="&#xf2db;"></Span>
-      <Span :text="' Software quality: ' + quality + '%\n'" fontAttributes="Bold"></Span>
-      <Label v-if="quality >= 80" text="Good" class="text-center text-sm" style="color: green" />
-      <Label v-else-if="quality < 80 && quality > 60" text="Warning" class="text-center text-sm" style="color: orange" />
-      <Label v-else-if="quality < 60 && !loading && quality > 0" text="Danger" class="text-center text-sm" style="color: red" />
-
--->
           <StackLayout
               v-show="quality > 0"
               orientation="horizontal"
@@ -249,12 +240,11 @@ export default Vue.extend({
       this.installing = true;
 
       // Generate a random request_id in uuid v1 format
-      // const request_id = '111f984c-6c0c-11ee-b962-0242ac120002';
       const request_id = this.generateUuid();
       console.log('UUID: ' + request_id);
 
       const command = {
-        operation: 'unknown_operation', // Replace with 'pull_image'
+        operation: 'pull_image',
         requestor_id: 4,
         request_id: request_id,
         image_name: 'ghcr.io/sifis-home/' + this.container_name + ':latest',
@@ -265,7 +255,7 @@ export default Vue.extend({
           'application_manager_uuid',
           command
       ).then((response) => {
-        let maxAttempts = 10;
+        let maxAttempts = 30;
         let attempts = 0;
 
         const checkInstallationResults = () => {
@@ -280,8 +270,6 @@ export default Vue.extend({
                 if (!response) {
                   this.error = 'Error connecting to:\n' + this.getDHTAddress();
                 } else {
-                  console.log(response.value);
-
                   if (response.value.request_id === request_id) {
                     // The request_id in the response matches the original request_id
                     console.log(
@@ -303,7 +291,7 @@ export default Vue.extend({
                           }
                       );
                     } else {
-                      // The application is installed
+                      // The application is installed. The install flow ends here
                       console.log('The application is installed');
                       this.installed = true;
                       this.installing = false;
@@ -315,9 +303,9 @@ export default Vue.extend({
                   }
                 }
               });
-            }, 100);
+            }, 500);
           } else {
-            // Max attempts reached, exit the method
+            // Max attempts reached. Show an alert and exit the method
             console.log(
                 'Max attempts reached while checking SIFIS:mobile-application / installation-results'
             );
@@ -354,38 +342,12 @@ export default Vue.extend({
     },
 
     installAnyway(request_id) {
-      // console.log('Install anyway selected');
-      // const command = {
-      //   operation: 'install_anyway',
-      //   requestor_id: 4,
-      //   request_id: request_id,
-      //   image_name: 'ghcr.io/sifis-home/' + this.container_name + ':latest',
-      // };
-
-      // this.postDhtSensor(
-      //   'SIFIS:app_manager',
-      //   'application_manager_uuid',
-      //   command
-      // );
-      // this.installing = false;
+      console.log('Install anyway selected');
       this.sendDecisionAndGetConfirmation('install_anyway', 'installed');
     },
 
     abortInstallation(request_id) {
       console.log('Abort installation selected');
-      // const command = {
-      //   operation: 'abort',
-      //   requestor_id: 4,
-      //   request_id: request_id,
-      //   image_name: 'ghcr.io/sifis-home/' + this.container_name + ':latest',
-      // };
-
-      // this.postDhtSensor(
-      //   'SIFIS:app_manager',
-      //   'application_manager_uuid',
-      //   command
-      // );
-      // this.installing = false;
       this.sendDecisionAndGetConfirmation('abort', 'aborted');
     },
 
@@ -401,7 +363,6 @@ export default Vue.extend({
 
     sendDecisionAndGetConfirmation(operation, expected_confirmation) {
       const request_id = this.generateUuid();
-      // const request_id = 'request_id_XXX';
       console.log('UUID: ' + request_id);
       const command = this.generateNewCommand(operation, request_id);
 
@@ -411,7 +372,7 @@ export default Vue.extend({
           'application_manager_uuid',
           command
       ).then((response) => {
-        let maxAttempts = 10;
+        let maxAttempts = 30;
         let attempts = 0;
         const checkInstallationResults = (expected_value) => {
           if (attempts < maxAttempts) {
@@ -454,9 +415,9 @@ export default Vue.extend({
                   }
                 }
               });
-            }, 1000);
+            }, 500);
           } else {
-            // Max attempts reached, exit the method
+            // Max attempts reached. Show an alert and exit the method
             console.log(
                 'Max attempts reached while checking SIFIS:mobile-application / installation-results'
             );
